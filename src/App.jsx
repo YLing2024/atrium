@@ -53,9 +53,6 @@ function Nav() {
               {label}
             </a>
           ))}
-          <a href="https://cloud.zhangyunling.cn" target="_blank" rel="noreferrer" className="nav__cloud">
-            网盘 ↗
-          </a>
         </nav>
       </div>
     </header>

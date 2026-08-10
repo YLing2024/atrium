@@ -102,10 +102,6 @@ a {
   color: var(--text);
 }
 
-.nav__cloud {
-  color: var(--accent) !important;
-}
-
 /* ---------- Hero ---------- */
 
 .hero {
