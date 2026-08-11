@@ -1,0 +1,65 @@
+import { Link, useParams } from 'react-router-dom'
+import { getCollection } from '../api.js'
+import { formatDate } from '../utils.js'
+import useAsync from '../hooks/useAsync.js'
+import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+
+export default function CollectionDetail() {
+  const { slug } = useParams()
+  const { status, data: collection, retry } = useAsync(() => getCollection(slug), [slug])
+
+  return (
+    <article className="page container collection">
+      {status === 'loading' && <LoadingState />}
+      {status === 'error' && <ErrorState onRetry={retry} />}
+      {status === 'success' && collection === null && <EmptyState message="合集不存在" />}
+
+      {status === 'success' && collection && (
+        <>
+          <Link className="back-link" to="/blog/collections">
+            ← 返回合集列表
+          </Link>
+          <header className="post__head">
+            <p className="kicker">合集</p>
+            <h1 className="post__title">{collection.name}</h1>
+            {collection.description && (
+              <p className="collection__desc">{collection.description}</p>
+            )}
+          </header>
+
+          {collection.posts.length === 0 && <EmptyState message="这个合集还没有文章" />}
+
+          {collection.posts.length > 0 && (
+            <div className="blog-list__rows">
+              {collection.posts.map((post, i) => (
+                <article className="post-row" key={post.id}>
+                  <time className="post-row__date" dateTime={post.created_at}>
+                    {formatDate(post.created_at)}
+                  </time>
+                  <span className="post-row__num" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="post-row__cell">
+                    <Link className="post-row__main" to={`/blog/${post.slug}`}>
+                      <h2 className="post-row__title">{post.title}</h2>
+                      {post.excerpt && <p className="post-row__excerpt">{post.excerpt}</p>}
+                    </Link>
+                    {post.tags?.length > 0 && (
+                      <div className="post-row__tags">
+                        {post.tags.map((tag) => (
+                          <span className="tag" key={tag}>
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </article>
+  )
+}
