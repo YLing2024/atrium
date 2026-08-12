@@ -375,7 +375,7 @@ img {
 
 .page {
   min-height: 60vh;
-  padding: 96px 0 128px;
+  padding: 96px var(--gutter) 128px;
 }
 
 .state {
