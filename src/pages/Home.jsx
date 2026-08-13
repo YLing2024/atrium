@@ -35,13 +35,13 @@ function Hero() {
     <section className="hero" id="top">
       <div className="container swiss-grid hero__inner" data-reveal>
         <div className="hero__cell">
-          <p className="hero__kicker">个人主页｜Portfolio</p>
-          <h1 className="hero__name">张云凌</h1>
-          <p className="hero__sub">写代码，做产品，关注细节。</p>
+          <p className="hero__kicker">PORTFOLIO · 一个安静的角落</p>
+          <h1 className="hero__name">Linden Zhang</h1>
+          <p className="hero__sub">在代码与生活之间，安静地写，慢慢地走。</p>
           <p className="hero__quote">立志欲坚不欲锐，成功在久不在速。 —— 张孝祥</p>
           <a className="hero__scroll" href="#about" aria-label="向下滚动">
             <span className="hero__arrow">↓</span>
-            开始浏览
+            漫游
           </a>
         </div>
       </div>
@@ -60,11 +60,11 @@ function About() {
           <h2 className="kicker">关于</h2>
         </div>
         <div className="swiss-content" data-reveal>
-          <p className="about__lead">你好，我是张云凌，一名前端开发工程师。</p>
+          <p className="about__lead">你好，我是 Linden Zhang，一名写代码的人。</p>
           <p className="about__body">
-            平时写 Vue，也写 Flutter，偶尔写一点 Node.js。
-            喜欢把复杂的东西做得简单、安静、好用。
-            这里是互联网上属于我的一个小角落。
+            写 Vue，写 Flutter，偶尔写一点 Node。
+            喜欢把复杂的事做简单，把喧闹的世界做安静。
+            这里是互联网上属于我的一个小角落，欢迎你来做客。
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@ function Stack() {
           <h2 className="kicker">技术</h2>
         </div>
         <div className="swiss-content" data-reveal>
-          <p className="stack__text">日常使用的技术，大多是些常见的东西。</p>
+          <p className="stack__text">技术是工具，顺手、可靠，比什么都重要。</p>
           <p className="stack__items">{STACK}</p>
         </div>
       </div>

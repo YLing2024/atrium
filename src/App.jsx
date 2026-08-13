@@ -32,9 +32,8 @@ function Nav() {
   return (
     <header className="nav">
       <div className="container nav__inner">
-        <Link className="nav__brand" to="/">
-          <span className="nav__brand-name">张云凌</span>
-          <span className="nav__brand-tag">ZHANG YUNLING</span>
+        <Link className="nav__brand" to="/" aria-label="首页">
+          <span className="nav__brand-mark" aria-hidden="true" />
         </Link>
         <nav className="nav__links" aria-label="主导航">
           {NAV_LINKS.map(({ to, label, index }) => (
@@ -60,7 +59,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        <span>© 2026 张云凌</span>
+        <span>© 2026 Linden Zhang</span>
         <span className="footer__note">Front-End Developer</span>
       </div>
     </footer>
