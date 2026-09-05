@@ -33,10 +33,7 @@ function Hero() {
     <section className="hero" id="top">
       <div className="container hero__inner" data-reveal>
         <div className="hero__meta">
-          <p className="hero__kicker">Portfolio — self-hosted · front-end</p>
-          <p className="hero__coords" aria-hidden="true">
-            Hangzhou · CN — zhangyunling.cn
-          </p>
+          <p className="hero__kicker">A quiet corner of the web, made by hand</p>
         </div>
 
         <h1 className="hero__name">
@@ -74,61 +71,12 @@ function About() {
         </div>
         <div className="swiss-content" data-reveal>
           <p className="about__lead">
-            I build <strong>interfaces</strong> for the web, then run them myself on{' '}
-            <strong>quiet little servers</strong>.
+            I make things for the web — and I run them myself.
           </p>
           <p className="about__body">
-            Ten years of front-end work across Vue, React and Flutter. Writing product code by
-            day; self-hosting the services behind this site — blog, photo album, file storage —
-            by night. I prefer small tools that do one thing well, and systems that stay boring.
+            Small tools, quiet servers, and no hurry. If the interface disappears and the page
+            simply loads, it is enough.
           </p>
-          <div className="about__facts">
-            <div className="about__fact">
-              <span className="about__fact-label">Focus</span>
-              <span className="about__fact-value">Interfaces &amp; self-hosting</span>
-            </div>
-            <div className="about__fact">
-              <span className="about__fact-label">Since</span>
-              <span className="about__fact-value">2016 — writing for the web</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-const TOOLS = [
-  { svc: 'Homepage', scope: 'React · Vite · CSS · nginx · Certbot', kind: 'Site' },
-  { svc: 'Blog', scope: 'Node.js · Express · SQLite', kind: 'API' },
-  { svc: 'Photo album', scope: 'Flutter · Dart · self-hosted', kind: 'App' },
-  { svc: 'File storage', scope: 'Node.js · Cloudreve · Cloudflare', kind: 'Service' },
-  { svc: 'This server', scope: 'Linux · Docker · Caddy', kind: 'Infra' },
-]
-
-function Stack() {
-  return (
-    <section className="section swiss-section" id="stack">
-      <div className="container swiss-grid">
-        <div className="swiss-rail" data-reveal>
-          <span className="swiss-num" aria-hidden="true">
-            02
-          </span>
-          <h2 className="kicker section-kicker">Infra</h2>
-        </div>
-        <div className="swiss-content" data-reveal>
-          <p className="stack__text">
-            Tools are only good while they stay out of the way — dependable, boring, on.
-          </p>
-          <ul className="tools-list">
-            {TOOLS.map((t) => (
-              <li className="tools-row" key={t.svc}>
-                <span className="tools-row__service">{t.svc}</span>
-                <span className="tools-row__scope">{t.scope}</span>
-                <span className="tools-row__stack">{t.kind}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>
@@ -144,7 +92,7 @@ function LatestPosts() {
       <div className="container swiss-grid">
         <div className="swiss-rail" data-reveal>
           <span className="swiss-num" aria-hidden="true">
-            03
+            02
           </span>
           <h2 className="kicker section-kicker">Writing</h2>
         </div>
@@ -192,7 +140,7 @@ function Contact() {
       <div className="container swiss-grid">
         <div className="swiss-rail" data-reveal>
           <span className="swiss-num" aria-hidden="true">
-            04
+            03
           </span>
           <h2 className="kicker section-kicker">Contact</h2>
         </div>
@@ -227,7 +175,6 @@ export default function Home() {
     <>
       <Hero />
       <About />
-      <Stack />
       <LatestPosts />
       <Contact />
     </>
