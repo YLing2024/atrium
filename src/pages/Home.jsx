@@ -42,10 +42,6 @@ function Hero() {
         </h1>
 
         <div className="hero__bottom">
-          <p className="hero__role">
-            <span className="hero__role-dot" aria-hidden="true" />
-            <span className="hero__role-label">Front-End Engineer</span>
-          </p>
           <div className="hero__line">
             <p className="hero__sub">Interfaces on the front. Infrastructure underneath.</p>
             <p className="hero__quote">

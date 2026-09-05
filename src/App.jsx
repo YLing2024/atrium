@@ -112,7 +112,7 @@ function Footer() {
     <footer className="footer">
       <div className="container footer__inner">
         <span>© 2026 Yunling Zhang</span>
-        <span className="footer__note">Front-End Engineer</span>
+        <span className="footer__note">Made by hand</span>
       </div>
     </footer>
   )
