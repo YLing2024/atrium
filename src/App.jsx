@@ -59,8 +59,6 @@ function Nav() {
         <div className="container nav__inner">
           <Link className="nav__brand" to="/" aria-label="Yunling Zhang — Home">
             <span className="nav__brand-mark" aria-hidden="true" />
-            <span className="nav__brand-name">yunling.zhang</span>
-            <span className="nav__brand-tag">cn</span>
           </Link>
 
           <nav className="nav__links" aria-label="Primary">
@@ -103,7 +101,6 @@ function Nav() {
               {label}
             </NavLink>
           ))}
-          <p className="nav-drawer__meta">zhangyunling.cn — v2</p>
         </nav>
       </div>
     </>
