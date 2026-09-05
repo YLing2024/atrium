@@ -12,22 +12,22 @@ export default function CollectionDetail() {
     <article className="page container collection">
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
-      {status === 'success' && collection === null && <EmptyState message="合集不存在" />}
+      {status === 'success' && collection === null && <EmptyState message="Collection not found." />}
 
       {status === 'success' && collection && (
         <>
           <Link className="back-link" to="/blog/collections">
-            ← 返回合集列表
+            <span aria-hidden="true">←</span> All collections
           </Link>
           <header className="post__head">
-            <p className="kicker">合集</p>
+            <p className="kicker">Collection</p>
             <h1 className="post__title">{collection.name}</h1>
             {collection.description && (
               <p className="collection__desc">{collection.description}</p>
             )}
           </header>
 
-          {collection.posts.length === 0 && <EmptyState message="这个合集还没有文章" />}
+          {collection.posts.length === 0 && <EmptyState message="No posts in this collection yet." />}
 
           {collection.posts.length > 0 && (
             <div className="blog-list__rows">

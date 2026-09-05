@@ -9,16 +9,16 @@ export default function Collections() {
   return (
     <section className="page container collections">
       <header className="blog-list__head">
-        <p className="kicker">博客</p>
-        <h1 className="blog-list__title">合集</h1>
+        <p className="kicker">Blog</p>
+        <h1 className="blog-list__title">Collections</h1>
         <p className="blog-list__count">
-          共 {status === 'success' ? data.length : '—'} 个
+          {status === 'success' ? `${data.length} collections` : '—'}
         </p>
       </header>
 
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
-      {status === 'success' && data.length === 0 && <EmptyState message="还没有合集" />}
+      {status === 'success' && data.length === 0 && <EmptyState message="No collections yet." />}
 
       {status === 'success' && data.length > 0 && (
         <div className="collections__grid">
@@ -35,7 +35,7 @@ export default function Collections() {
               {collection.description && (
                 <p className="collection-card__desc">{collection.description}</p>
               )}
-              <span className="collection-card__count">{collection.post_count} 篇</span>
+              <span className="collection-card__count">{collection.post_count} posts</span>
             </Link>
           ))}
         </div>

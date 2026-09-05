@@ -23,31 +23,31 @@ export default function BlogList() {
   return (
     <section className="page container blog-list">
       <header className="blog-list__head">
-        <p className="kicker">博客</p>
-        <h1 className="blog-list__title">文章</h1>
+        <p className="kicker">Blog</p>
+        <h1 className="blog-list__title">Writing</h1>
         <input
           className="blog-list__search"
           type="search"
-          placeholder="搜索标题、摘要或标签…"
-          aria-label="搜索文章"
+          placeholder="Search by title, excerpt or tag…"
+          aria-label="Search articles"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <div className="blog-list__head-row">
           <p className="blog-list__count">
-            共 {status === 'success' ? data.length : '—'} 篇
+            {status === 'success' ? `${data.length} posts` : '—'}
           </p>
           <Link className="blog-list__entry" to="/blog/collections">
-            合集 →
+            Collections <span aria-hidden="true">→</span>
           </Link>
         </div>
       </header>
 
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
-      {status === 'success' && data.length === 0 && <EmptyState message="还没有文章" />}
+      {status === 'success' && data.length === 0 && <EmptyState message="No posts yet." />}
       {status === 'success' && data.length > 0 && filtered.length === 0 && (
-        <EmptyState message="没有找到匹配的文章" />
+        <EmptyState message="Nothing matches your search." />
       )}
 
       {status === 'success' && filtered.length > 0 && (

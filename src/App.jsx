@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, NavLink, Link, Outlet, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import BlogList from './pages/BlogList.jsx'
@@ -7,8 +7,8 @@ import Collections from './pages/Collections.jsx'
 import CollectionDetail from './pages/CollectionDetail.jsx'
 
 const NAV_LINKS = [
-  { to: '/', label: '首页', index: '01' },
-  { to: '/blog', label: '博客', index: '02' },
+  { to: '/', label: 'Home', index: '01', end: true },
+  { to: '/blog', label: 'Blog', index: '02', end: false },
 ]
 
 function ScrollManager() {
@@ -29,29 +29,84 @@ function ScrollManager() {
 }
 
 function Nav() {
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    document.body.classList.toggle('nav-open', open)
+    if (!open) return () => document.body.classList.remove('nav-open')
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.classList.remove('nav-open')
+    }
+  }, [open])
+
+  const close = () => setOpen(false)
+
+  const linkClass = ({ isActive }) => (isActive ? 'is-active' : undefined)
+
   return (
-    <header className="nav">
-      <div className="container nav__inner">
-        <Link className="nav__brand" to="/" aria-label="首页">
-          <span className="nav__brand-mark" aria-hidden="true" />
-        </Link>
-        <nav className="nav__links" aria-label="主导航">
-          {NAV_LINKS.map(({ to, label, index }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === '/'}
-              className={({ isActive }) => (isActive ? 'is-active' : undefined)}
-            >
-              <span className="nav__index" aria-hidden="true">
+    <>
+      <header className="nav">
+        <div className="container nav__inner">
+          <Link className="nav__brand" to="/" aria-label="Yunling Zhang — Home">
+            <span className="nav__brand-mark" aria-hidden="true" />
+            <span className="nav__brand-name">yunling.zhang</span>
+            <span className="nav__brand-tag">cn</span>
+          </Link>
+
+          <nav className="nav__links" aria-label="Primary">
+            {NAV_LINKS.map(({ to, label, index, end }) => (
+              <NavLink key={to} to={to} end={end} className={linkClass}>
+                <span className="nav__index" aria-hidden="true">
+                  {index}
+                </span>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <button
+            type="button"
+            className={`nav__toggle${open ? ' is-open' : ''}`}
+            aria-expanded={open}
+            aria-controls="site-menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span />
+            <span />
+          </button>
+        </div>
+      </header>
+
+      <div
+        id="site-menu"
+        className={`nav-drawer${open ? ' is-open' : ''}`}
+        aria-hidden={!open}
+        onClick={close}
+      >
+        <nav className="container nav-drawer__inner" aria-label="Mobile">
+          {NAV_LINKS.map(({ to, label, index, end }) => (
+            <NavLink key={to} to={to} end={end} className="nav-drawer__link" onClick={close}>
+              <span className="nav-drawer__num" aria-hidden="true">
                 {index}
               </span>
               {label}
             </NavLink>
           ))}
+          <p className="nav-drawer__meta">zhangyunling.cn — v2</p>
         </nav>
       </div>
-    </header>
+    </>
   )
 }
 
@@ -59,8 +114,8 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        <span>© 2026 Linden Zhang</span>
-        <span className="footer__note">Front-End Developer</span>
+        <span>© 2026 Yunling Zhang</span>
+        <span className="footer__note">Front-End Engineer</span>
       </div>
     </footer>
   )

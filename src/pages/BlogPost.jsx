@@ -58,15 +58,15 @@ export default function BlogPost() {
       const button = document.createElement('button')
       button.type = 'button'
       button.className = 'post__copy'
-      button.textContent = '复制'
-      button.setAttribute('aria-label', '复制代码')
+      button.textContent = 'Copy'
+      button.setAttribute('aria-label', 'Copy code')
       button.addEventListener('click', async (e) => {
         e.preventDefault()
         if (!code) return
         const ok = await copyText(code.textContent || '')
-        button.textContent = ok ? '已复制' : '复制失败'
+        button.textContent = ok ? 'Copied' : 'Copy failed'
         window.setTimeout(() => {
-          button.textContent = '复制'
+          button.textContent = 'Copy'
         }, 1600)
       })
       pre.classList.add('post__code-block')
@@ -78,15 +78,15 @@ export default function BlogPost() {
     <article className="page container post">
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
-      {status === 'success' && post === null && <EmptyState message="文章不存在或未发布" />}
+      {status === 'success' && post === null && <EmptyState message="Post not found or unpublished." />}
 
       {status === 'success' && post && (
         <>
           <Link className="back-link" to="/blog">
-            ← 返回文章列表
+            <span aria-hidden="true">←</span> All posts
           </Link>
           <header className="post__head">
-            <p className="kicker">博客文章</p>
+            <p className="kicker">Article</p>
             <h1 className="post__title">{post.title}</h1>
             <div className="post__meta">
               <time className="post-row__date" dateTime={post.created_at}>

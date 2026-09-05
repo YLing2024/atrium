@@ -1,4 +1,4 @@
-export function LoadingState({ label = '加载中…' }) {
+export function LoadingState({ label = 'Loading…' }) {
   return (
     <p className="state" role="status">
       {label}
@@ -9,16 +9,16 @@ export function LoadingState({ label = '加载中…' }) {
 export function ErrorState({ onRetry }) {
   return (
     <div className="state" role="alert">
-      <p>加载失败，请检查网络后重试。</p>
+      <p>Failed to load. Check your connection and try again.</p>
       {onRetry && (
         <button type="button" className="btn-retry" onClick={onRetry}>
-          重试
+          Retry
         </button>
       )}
     </div>
   )
 }
 
-export function EmptyState({ message = '暂无内容' }) {
+export function EmptyState({ message = 'Nothing here yet.' }) {
   return <p className="state">{message}</p>
 }
