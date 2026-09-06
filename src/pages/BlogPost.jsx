@@ -8,6 +8,17 @@ import { formatDate } from '../utils.js'
 import useAsync from '../hooks/useAsync.js'
 import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
 
+async function codeText(code) {
+  const tbody = code?.querySelector('tbody')
+  if (!tbody) return code?.textContent || ''
+  const lines = []
+  tbody.querySelectorAll('tr').forEach((row) => {
+    const td = row.querySelector('.hljs-ln-code')
+    if (td) lines.push(td.textContent.replace(/\n+$/, ''))
+  })
+  return lines.join('\n')
+}
+
 async function copyText(text) {
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
     try {
@@ -52,6 +63,17 @@ export default function BlogPost() {
       hljs.highlightElement(block)
     })
 
+    body.querySelectorAll('.post__body > table').forEach((table) => {
+      if (table.parentElement.classList.contains('post__table-wrap')) return
+      const wrap = document.createElement('div')
+      wrap.className = 'post__table-wrap'
+      wrap.setAttribute('tabindex', '0')
+      wrap.setAttribute('role', 'region')
+      wrap.setAttribute('aria-label', 'Scrollable table')
+      table.replaceWith(wrap)
+      wrap.appendChild(table)
+    })
+
     body.querySelectorAll('pre').forEach((pre) => {
       if (pre.querySelector('.post__copy')) return
       const code = pre.querySelector('code')
@@ -62,8 +84,7 @@ export default function BlogPost() {
       button.setAttribute('aria-label', 'Copy code')
       button.addEventListener('click', async (e) => {
         e.preventDefault()
-        if (!code) return
-        const ok = await copyText(code.textContent || '')
+        const ok = await copyText(await codeText(code))
         button.textContent = ok ? 'Copied' : 'Copy failed'
         window.setTimeout(() => {
           button.textContent = 'Copy'
@@ -72,6 +93,20 @@ export default function BlogPost() {
       pre.classList.add('post__code-block')
       pre.appendChild(button)
     })
+
+    let alive = true
+    window.hljs = hljs
+    import('highlightjs-line-numbers.js').then(() => {
+      if (!alive || !window.hljs?.lineNumbersBlockSync) return
+      body.querySelectorAll('pre > code').forEach((block) => {
+        if (block.querySelector('.hljs-ln')) return
+        if (!block.textContent.trim() && !block.dataset.lang) return
+        window.hljs.lineNumbersBlockSync(block, { singleLine: true })
+      })
+    })
+    return () => {
+      alive = false
+    }
   }, [bodyHtml])
 
   return (

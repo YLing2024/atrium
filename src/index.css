@@ -1126,6 +1126,7 @@ body.nav-open {
   padding: 1px 6px;
   border: 1px solid var(--line);
   background: transparent;
+  overflow-wrap: anywhere;
 }
 
 .post__body pre {
@@ -1134,6 +1135,7 @@ body.nav-open {
   overflow-x: auto;
   border: 1px solid var(--line);
   line-height: 1.6;
+  -webkit-overflow-scrolling: touch;
 }
 
 .post__body pre code {
@@ -1142,6 +1144,7 @@ body.nav-open {
   border: none;
   font-size: 14px;
   line-height: 1.7;
+  overflow-wrap: normal;
 }
 
 .post__body pre code[data-lang]::before {
@@ -1156,6 +1159,44 @@ body.nav-open {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--faint);
+}
+
+/* Line numbers (.hljs-ln), added by highlightjs-line-numbers.js.
+   pre is the single horizontal scroll container, so long lines scroll
+   without ever stretching the page. The gutter is muted, right-aligned,
+   separated by a hairline and excluded from text selection/copying.
+   Applied to any pre>code that carries the plugin's table, highlighted
+   or not. */
+.post__body pre code.hljs {
+  overflow-x: visible;
+}
+
+.post__body pre code .hljs-ln td {
+  padding: 0;
+  border: none;
+  vertical-align: top;
+}
+
+.post__body pre code .hljs-ln-numbers {
+  width: 1%;
+  padding-right: 1.1em !important;
+  border-right: 1px solid var(--line) !important;
+  user-select: none;
+  -webkit-user-select: none;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.post__body pre code .hljs-ln-n {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.post__body pre code .hljs-ln-code {
+  padding-left: 1.1em !important;
+  white-space: pre;
 }
 
 .post__code-block {
@@ -1202,23 +1243,33 @@ body.nav-open {
   margin: 0 0 1.6em;
 }
 
-.post__body table {
-  width: 100%;
+/* Tables scroll inside their own container on small screens instead of
+   stretching the page. */
+.post__table-wrap {
+  max-width: 100%;
   margin: 0 0 1.6em;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  -webkit-overflow-scrolling: touch;
+}
+
+.post__table-wrap table {
+  width: 100%;
+  margin: 0;
   border-collapse: collapse;
   font-size: 15px;
   font-variant-numeric: tabular-nums;
 }
 
-.post__body th,
-.post__body td {
+.post__table-wrap th,
+.post__table-wrap td {
   padding: 10px 14px;
   border: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
 }
 
-.post__body th {
+.post__table-wrap th {
   font-weight: 500;
   background: var(--line-soft);
 }
