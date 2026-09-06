@@ -75,7 +75,13 @@ export default function BlogPost() {
     })
 
     body.querySelectorAll('pre').forEach((pre) => {
-      if (pre.querySelector('.post__copy')) return
+      if (pre.classList.contains('post__code-block')) return
+      // 包一层不滚动的 wrapper：Copy 按钮定位在 wrapper 上，横向滚动时按钮不跟着代码移动
+      const wrap = document.createElement('div')
+      wrap.className = 'post__code-block'
+      pre.parentNode.insertBefore(wrap, pre)
+      wrap.appendChild(pre)
+
       const code = pre.querySelector('code')
       const button = document.createElement('button')
       button.type = 'button'
@@ -90,8 +96,7 @@ export default function BlogPost() {
           button.textContent = 'Copy'
         }, 1600)
       })
-      pre.classList.add('post__code-block')
-      pre.appendChild(button)
+      wrap.appendChild(button)
     })
 
     let alive = true
