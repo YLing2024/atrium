@@ -10,6 +10,23 @@
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171512'/%3E%3Crect x='26' y='26' width='12' height='12' fill='%23a05b0c' transform='rotate(45 32 32)'/%3E%3C/svg%3E"
     />
     <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link id="hljs-light" rel="stylesheet" href="/hljs/github.css" media="(prefers-color-scheme: light)" />
+    <link id="hljs-dark" rel="stylesheet" href="/hljs/github-dark.css" media="(prefers-color-scheme: dark)" />
+    <script>
+      // 主题：在首帧前落地（变量色 + 代码高亮），避免刷新时闪回系统配色
+      try {
+        var t = localStorage.getItem('site_theme')
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.dataset.theme = t
+          var m = document.querySelector('meta[name="theme-color"]')
+          if (m) m.setAttribute('content', t === 'dark' ? '#13110f' : '#f7f6f3')
+          var l = document.getElementById('hljs-light')
+          var d = document.getElementById('hljs-dark')
+          if (l) l.setAttribute('media', t === 'dark' ? 'not all' : 'all')
+          if (d) d.setAttribute('media', t === 'dark' ? 'all' : 'not all')
+        }
+      } catch (e) {}
+    </script>
     <title>Yunling Zhang — A quiet corner of the web</title>
     <script>
       // 注销 Cloudreve 注册的根路径 Service Worker，避免其接管整个域名

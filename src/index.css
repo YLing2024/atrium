@@ -4,9 +4,6 @@
    — neutrals ~90% (warm paper / ink) · one accent used in the gaps only
    ========================================================================== */
 
-@import "highlight.js/styles/github.css" (prefers-color-scheme: light);
-@import "highlight.js/styles/github-dark.css" (prefers-color-scheme: dark);
-
 :root {
   /* Warm paper / ink neutrals — slightly warmer than before, off-#fff and
      off-#000 on purpose (color.md §dark themes). Hairlines are translucent. */
@@ -42,7 +39,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #13110f;
     --surface: #191715;
     --fg: #efeae3;
@@ -54,6 +51,19 @@
     --accent: #c77c1f;
     --accent-ink: #d98e35;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #13110f;
+  --surface: #191715;
+  --fg: #efeae3;
+  --muted: #a29b92;
+  --faint: #746e66;
+  --line: rgba(239, 234, 227, 0.16);
+  --line-soft: rgba(239, 234, 227, 0.09);
+  --ink: #efeae3;
+  --accent: #c77c1f;
+  --accent-ink: #d98e35;
 }
 
 * {
@@ -237,6 +247,7 @@ button {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-left: auto;
 }
 
 .nav__links a {
@@ -317,6 +328,37 @@ button {
 .nav__toggle.is-open span:nth-child(2) {
   top: 20px;
   transform: rotate(-45deg);
+}
+
+/* Theme switcher (auto → light → dark) */
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.14s var(--ease);
+}
+
+.nav__theme:hover {
+  color: var(--fg);
+}
+
+.nav__theme:focus-visible {
+  outline: 1px solid var(--line);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* Drawer overlay */
