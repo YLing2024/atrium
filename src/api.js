@@ -11,7 +11,10 @@ export function fetchPosts() {
 }
 
 export async function fetchPost(slug) {
-  const res = await fetch(`${API_BASE}/posts/${encodeURIComponent(slug)}`)
+  // 草稿预览：后台点标题会带 ?preview=<短时效令牌>，服务端校验后才放行未发布文章
+  const preview = new URLSearchParams(window.location.search).get('preview')
+  const qs = preview ? `?preview=${encodeURIComponent(preview)}` : ''
+  const res = await fetch(`${API_BASE}/posts/${encodeURIComponent(slug)}${qs}`)
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`Request failed (${res.status})`)
   return res.json()

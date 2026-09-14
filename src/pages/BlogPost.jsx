@@ -243,7 +243,7 @@ export default function BlogPost() {
                 <span aria-hidden="true">←</span> All posts
               </Link>
               <header className="post__head">
-                <p className="kicker">Article</p>
+                <p className="kicker">{post.published === false ? 'Draft preview' : 'Article'}</p>
                 <h1 className="post__title">{post.title}</h1>
                 <div className="post__meta">
                   <time className="post-row__date" dateTime={post.created_at}>
