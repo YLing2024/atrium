@@ -1088,6 +1088,262 @@ body.nav-open {
   flex-wrap: wrap;
 }
 
+/* ---------- Article layout: prose column + contents rail ---------- */
+
+.post__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .post__layout {
+    grid-template-columns: minmax(0, 1fr) 200px;
+    column-gap: 64px;
+  }
+}
+
+.post__main {
+  min-width: 0;
+}
+
+/* Sticky reading bar (appears once the article head scrolls away;
+   carries the Contents button on narrow screens) */
+.post__sticky-bar {
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 0 var(--gutter);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.post__sticky-bar.is-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.post__sticky-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 52px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+.post__sticky-back {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.2s var(--ease);
+}
+
+.post__sticky-back:hover {
+  color: var(--fg);
+}
+
+.post__sticky-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.post__sticky-toc-btn {
+  display: none;
+  margin-left: auto;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+
+.post__sticky-toc-btn:hover {
+  border-color: var(--fg);
+}
+
+/* Contents rail */
+.post__toc {
+  position: sticky;
+  top: 140px;
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
+}
+
+.post__toc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post__toc-close {
+  display: none;
+  border: none;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.post__toc-mask {
+  display: none;
+}
+
+.post__toc-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.post__toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post__toc-item {
+  margin-bottom: 2px;
+}
+
+.post__toc-item a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 0 5px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  border-left: 1px solid var(--line);
+  transition:
+    color 0.2s var(--ease),
+    border-left-color 0.2s var(--ease);
+}
+
+.post__toc-item a:hover {
+  color: var(--fg);
+}
+
+.post__toc-item a.is-active {
+  color: var(--fg);
+  border-left-color: var(--accent);
+}
+
+.post__toc-num {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.post__toc-h3 a {
+  padding-left: 24px;
+  font-size: 12px;
+}
+
+/* Anchors land below the sticky bar.
+   Note: html already carries `scroll-padding-top: 88px`, and the two offsets add
+   up — 88 + 44 = 132px total, i.e. 16px clear of the sticky bar's lower edge. */
+.post__body h2,
+.post__body h3 {
+  scroll-margin-top: 44px;
+}
+
+/* Narrow screens: rail becomes a right-hand drawer (Contents button in the bar) */
+@media (max-width: 999px) {
+  .post__sticky-toc-btn {
+    display: inline-block;
+  }
+
+  .post__toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    width: min(320px, 84vw);
+    max-height: none;
+    margin: 0;
+    padding: 24px 24px 48px;
+    background: var(--bg);
+    border-left: 1px solid var(--line);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition:
+      transform 0.28s var(--ease),
+      visibility 0.28s var(--ease);
+  }
+
+  .post__toc.is-open {
+    transform: none;
+    visibility: visible;
+  }
+
+  .post__toc-close {
+    display: block;
+  }
+
+  .post__toc-head {
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .post__toc-title {
+    margin: 0;
+    border: none;
+    padding: 0;
+  }
+
+  .post__toc-mask {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 190;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.28s var(--ease),
+      visibility 0.28s var(--ease);
+  }
+
+  .post__toc-mask.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
 /* ---------- Prose (65–75ch) ---------- */
 
 .post__body {
