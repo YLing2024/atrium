@@ -26,7 +26,7 @@ export default function Collections() {
             <Link
               className="collection-card"
               key={collection.id}
-              to={`/blog/collections/${collection.slug}`}
+              to={`/blog/collections/${collection.public_id || collection.slug}`}
             >
               <span className="collection-card__num" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}

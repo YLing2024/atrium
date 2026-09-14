@@ -252,7 +252,7 @@ export default function BlogPost() {
                   {post.collection && (
                     <Link
                       className="collection-badge"
-                      to={`/blog/collections/${post.collection.slug}`}
+                      to={`/blog/collections/${post.collection.public_id || post.collection.slug}`}
                     >
                       {post.collection.name}
                     </Link>
