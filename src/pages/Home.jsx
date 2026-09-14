@@ -107,7 +107,7 @@ function LatestPosts() {
                     <span className="post-row__num" aria-hidden="true">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <Link className="post-row__main" to={`/blog/${post.slug}`}>
+                    <Link className="post-row__main" to={`/blog/${post.public_id || post.slug}`}>
                       <h3 className="post-row__title">
                         {post.title}
                         <span className="post-row__title-arrow" aria-hidden="true">

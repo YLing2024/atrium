@@ -61,7 +61,7 @@ export default function BlogList() {
                 {String(i + 1).padStart(2, '0')}
               </span>
               <div className="post-row__cell">
-                <Link className="post-row__main" to={`/blog/${post.slug}`}>
+                <Link className="post-row__main" to={`/blog/${post.public_id || post.slug}`}>
                   <h2 className="post-row__title">{post.title}</h2>
                   {post.excerpt && <p className="post-row__excerpt">{post.excerpt}</p>}
                 </Link>
