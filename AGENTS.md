@@ -17,7 +17,7 @@
 | 框架 | React 18 + Vite 5 + react-router-dom 7 |
 | 样式 | 手写 CSS（`src/index.css`），**无 UI 库、无 Tailwind、无 CSS-in-JS** |
 | Markdown | `marked` + `dompurify`（必须经 DOMPurify 消毒后再 `dangerouslySetInnerHTML`） |
-| 高亮 | `highlight.js`（`public/hljs/` 下自定义打包） |
+| 高亮 | `highlight.js` + `highlightjs-line-numbers.js`（npm 包，主题 CSS 在 `public/hljs/`） |
 | 字体 | 自托管 `public/fonts/`：Inter Tight / Inter / JetBrains Mono（latin 子集） |
 | 运行时 | Node 24 / npm 11（服务器 nvm v24.19.0） |
 
