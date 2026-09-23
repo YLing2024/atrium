@@ -3,10 +3,21 @@ import { Link, useParams } from 'react-router-dom'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js/lib/common'
+// `common` is the trimmed bundle; these four languages are not in it but ship
+// as single files in the same package (no new dependency, no full `highlight.js`).
+import dart from 'highlight.js/lib/languages/dart'
+import dockerfile from 'highlight.js/lib/languages/dockerfile'
+import nginx from 'highlight.js/lib/languages/nginx'
+import protobuf from 'highlight.js/lib/languages/protobuf'
 import { fetchPost } from '../api.js'
 import { formatDate } from '../utils.js'
 import useAsync from '../hooks/useAsync.js'
 import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+
+hljs.registerLanguage('dart', dart)
+hljs.registerLanguage('dockerfile', dockerfile)
+hljs.registerLanguage('nginx', nginx)
+hljs.registerLanguage('protobuf', protobuf)
 
 async function codeText(code) {
   const tbody = code?.querySelector('tbody')
@@ -76,7 +87,10 @@ export default function BlogPost() {
     if (!body) return
     body.querySelectorAll('pre code').forEach((block) => {
       const lang = (block.className.match(/language-([\w-]+)/) || [])[1]
-      if (lang) block.dataset.lang = lang
+      // No explicit language → leave it as plain text. Auto-detect mangles
+      // mixed CJK snippets and writes a bogus `language-undefined` class.
+      if (!lang) return
+      block.dataset.lang = lang
       hljs.highlightElement(block)
     })
 
