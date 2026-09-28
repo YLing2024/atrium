@@ -67,7 +67,7 @@ npm run preview
 ## 部署
 
 - nginx：`server_name zhangyunling.cn www.zhangyunling.cn`，`root /var/www/homepage`（配置 `/etc/nginx/conf.d/homepage.conf`）。
-- 同域 API 反代（nginx 层）：`/api/blog/*` → `127.0.0.1:4000`、`/api/admin/*` → `127.0.0.1:3100`、`/api/blog/admin/*` 走 SSO 探针。
+- 同域 API 反代（nginx 层）：`/api/blog/*` 公开读 → `127.0.0.1:4000`；`/api/blog/admin/*` 与 `/api/admin/*` 交给 Auth Gateway（`127.0.0.1:18920`）鉴权后反代（管理员接口由网关注入 `X-Auth-User`）。配置里**不再有** `auth_request` / SSO 探针。
 - `yling.site`（含 `www`）是镜像域名，配置在 `/etc/nginx/conf.d/yingsite.conf` 与 `yling-sub.conf`。**改 nginx 时两个域名体系要同步对齐**，否则会出现「镜像站行为和主站不一样」。
 - 前端无 systemd 单元。
 
