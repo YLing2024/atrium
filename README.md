@@ -13,7 +13,7 @@
 - `/` — 主页（Hero + 名言 + 最新文章）
 - `/blog` — 博客（列表/搜索/合集）
 - `/blog/:slug` — 文章详情
-- `/admin/` — Admin 管理后台（独立 SPA，SSO 登录）
+- `/admin/` — Admin 管理后台（独立 SPA，登录由 Auth Gateway 负责）
 
 ## 构建部署
 
