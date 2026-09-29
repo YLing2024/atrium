@@ -145,11 +145,13 @@ export default function BlogPost() {
     }
   }, [bodyHtml])
 
-  // Collect the table of contents: anchor every h2/h3, keep their text
+  // Collect the table of contents: anchor every h1/h2/h3, keep their text.
+  // h1 is included on purpose: articles written with `#` sections (older posts)
+  // would otherwise show up with a nearly empty Contents list.
   useEffect(() => {
     const body = bodyRef.current
     if (!body) return
-    const headings = [...body.querySelectorAll('h2, h3')]
+    const headings = [...body.querySelectorAll('h1, h2, h3')]
     headings.forEach((h, i) => {
       if (!h.id) h.id = headingId(i)
     })
@@ -175,7 +177,7 @@ export default function BlogPost() {
         if (clickLockRef.current > Date.now()) return
         const body = bodyRef.current
         if (!body) return
-        const headings = [...body.querySelectorAll('h2, h3')]
+        const headings = [...body.querySelectorAll('h1, h2, h3')]
         if (!headings.length) return
         // Topmost heading already at (or above) the reading line
         const probe = window.scrollY + 140
