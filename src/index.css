@@ -1081,7 +1081,7 @@ body.nav-open {
   margin-bottom: 28px;
 }
 
-.post__deck {
+.post__subtitle {
   max-width: 40em;
   margin: -8px 0 26px;
   color: var(--muted);
