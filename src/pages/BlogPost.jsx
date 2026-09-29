@@ -76,11 +76,32 @@ export default function BlogPost() {
   const clickLockRef = useRef(0)
   const [toc, setToc] = useState([])
 
-  const bodyHtml = useMemo(() => {
-    if (!post?.content) return ''
+  // Title lives in its own region (an <h1> in the header). The body must never
+  // contribute a second h1: a leading h1 in the markdown is the article's deck
+  // (subtitle) and moves up into the header; any other h1 is demoted to h2.
+  const rendered = useMemo(() => {
+    if (!post?.content) return { html: '', deck: '' }
     const raw = marked.parse(post.content)
-    return DOMPurify.sanitize(typeof raw === 'string' ? raw : '')
+    const clean = DOMPurify.sanitize(typeof raw === 'string' ? raw : '')
+    const doc = new DOMParser().parseFromString(`<div id="post-root">${clean}</div>`, 'text/html')
+    const root = doc.getElementById('post-root')
+    let deck = ''
+    const first = root.firstElementChild
+    if (first && first.tagName === 'H1') {
+      deck = first.textContent.trim()
+      first.remove()
+    }
+    root.querySelectorAll('h1').forEach((h) => {
+      const h2 = doc.createElement('h2')
+      h2.innerHTML = h.innerHTML
+      h.replaceWith(h2)
+    })
+    // A deck that just repeats the title carries no information.
+    if (deck && deck === (post.title || '').trim()) deck = ''
+    return { html: root.innerHTML, deck }
   }, [post])
+  const bodyHtml = rendered.html
+  const deck = rendered.deck
 
   useEffect(() => {
     const body = bodyRef.current
@@ -261,6 +282,7 @@ export default function BlogPost() {
               <header className="post__head">
                 <p className="kicker">{post.published === false ? 'Draft preview' : 'Article'}</p>
                 <h1 className="post__title">{post.title}</h1>
+                {deck && <p className="post__deck">{deck}</p>}
                 <div className="post__meta">
                   <time className="post-row__date" dateTime={post.created_at}>
                     {formatDate(post.created_at)}

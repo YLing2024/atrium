@@ -1081,6 +1081,14 @@ body.nav-open {
   margin-bottom: 28px;
 }
 
+.post__deck {
+  max-width: 40em;
+  margin: -8px 0 26px;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
 .post__meta {
   display: flex;
   align-items: center;
