@@ -4,11 +4,11 @@
 
 ## 这个项目是什么
 
-`zhangyunling.cn` 主站前端：个人主页 + 博客前台（文章列表 / 详情 / 合集 / 搜索）+ 代码高亮，并在 `/admin/` 挂载管理后台入口。
+个人主页 + 博客前台的静态站点（文章列表 / 详情 / 合集 / 搜索 + 代码高亮），并在 `/admin/` 挂载管理后台入口。**真实域名不写进仓库**。
 
 - 纯静态 SPA，**无 Node 进程**：构建产物直接由 nginx 托管。
-- 数据全部来自 `blog-server`（`:4000`，仓库 `../blog`），前端不直连数据库。
-- 管理后台前端**不在本仓库**，在 `../admin-web`（构建到 `/var/www/admin`）。
+- 数据全部来自博客后端（`:4000`，仓库 `atrium-blog`），前端不直连数据库。
+- 管理后台前端**不在本仓库**，在 `atrium-console`（构建到 `/var/www/admin`）。
 
 ## 技术栈
 
@@ -66,9 +66,9 @@ npm run preview
 
 ## 部署
 
-- nginx：`server_name zhangyunling.cn www.zhangyunling.cn`，`root /var/www/homepage`（配置 `/etc/nginx/conf.d/homepage.conf`）。
+- nginx：站点 `root /var/www/homepage`，配置在 `/etc/nginx/conf.d/` 下（`server_name` 由部署决定，不写进仓库）。
 - 同域 API 反代（nginx 层）：`/api/blog/*` 公开读 → `127.0.0.1:4000`；`/api/blog/admin/*` 与 `/api/admin/*` 交给 Auth Gateway（`127.0.0.1:18920`）鉴权后反代（管理员接口由网关注入 `X-Auth-User`）。配置里**不再有** `auth_request` / SSO 探针。
-- `yling.site`（含 `www`）是镜像域名，配置在 `/etc/nginx/conf.d/yingsite.conf` 与 `yling-sub.conf`。**改 nginx 时两个域名体系要同步对齐**，否则会出现「镜像站行为和主站不一样」。
+- 另有**镜像域名**体系（配置在同目录下的另一份 conf）。**改 nginx 时两套域名要同步对齐**，否则会出现「镜像站行为和主站不一样」。
 - 前端无 systemd 单元。
 
 ## 设计系统（硬性，与 admin-web / quotahub / v2link 同一套）
@@ -108,13 +108,13 @@ npm run preview
 
 ## 安全约定
 
-- 私有地址（认证中心域名、`monitor.` 子域、服务器公网 IP）**一律不得硬编码**；需要时走构建时 `import.meta.env.VITE_*` 注入，仓库只提交 `.env.example`，真实 `.env` 由 `.gitignore` 拦截。本仓库目前**不持有任何环境变量**；`/admin/` 入口是相对路径跳转。
+- 私有地址（认证中心域名、监控子域、服务器公网 IP）**一律不得硬编码**；需要时走构建时 `import.meta.env.VITE_*` 注入，仓库只提交 `.env.example`，真实 `.env` 由 `.gitignore` 拦截。本仓库目前**不持有任何环境变量**；`/admin/` 入口是相对路径跳转。
 - 渲染任何来自接口的 Markdown/HTML 前必须经 DOMPurify。
 
 ## 已知坑
 
 - 构建产物在 `/var/www/homepage`，**仓库内没有 `dist/`**，别去仓库里找构建结果。
-- `blog/web`、`blog/admin`（在 `../blog`）是**已停用的旧前端**，真正的博客前台就是本仓库、后台是 `../admin-web`，不要去改旧目录。
+- `blog/web`、`blog/admin`（在 `atrium-blog` 里）是**已停用的旧前端**，真正的博客前台就是本仓库、后台是 `atrium-console`，不要去改旧目录。
 - 改 `index.css` 里的设计令牌会同时影响全站，改前确认深浅色两套值都同步。
 
 ## 项目记忆（PROJECT_MEMORY.md）
