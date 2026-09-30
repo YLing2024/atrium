@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchPosts } from '../api.js'
-import { formatDate } from '../utils.js'
-import useAsync from '../hooks/useAsync.js'
-import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+import { fetchPosts, type BlogPostSummary } from '../api'
+import { formatDate } from '../utils'
+import useAsync from '../hooks/useAsync'
+import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
 function useReveal() {
   useEffect(() => {
-    const els = Array.from(document.querySelectorAll('[data-reveal]'))
+    const els = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
     if (!('IntersectionObserver' in window)) {
       els.forEach((el) => el.classList.add('is-visible'))
       return
@@ -80,7 +80,7 @@ function About() {
 }
 
 function LatestPosts() {
-  const { status, data, retry } = useAsync(fetchPosts, [])
+  const { status, data, retry } = useAsync<BlogPostSummary[]>(fetchPosts, [])
   const latest = (data || []).slice(0, 3)
 
   return (
@@ -101,7 +101,7 @@ function LatestPosts() {
               <div className="posts-mini">
                 {latest.map((post, i) => (
                   <article className="post-row post-row--mini" key={post.id}>
-                    <time className="post-row__date" dateTime={post.created_at}>
+                    <time className="post-row__date" dateTime={post.created_at || undefined}>
                       {formatDate(post.created_at)}
                     </time>
                     <span className="post-row__num" aria-hidden="true">

@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, NavLink, Link, Outlet, useLocation } from 'react-router-dom'
-import Home from './pages/Home.jsx'
-import BlogList from './pages/BlogList.jsx'
-import BlogPost from './pages/BlogPost.jsx'
-import Collections from './pages/Collections.jsx'
-import CollectionDetail from './pages/CollectionDetail.jsx'
-import { getTheme, cycleTheme, applyTheme, effectiveTheme } from './theme.js'
+import Home from './pages/Home'
+import BlogList from './pages/BlogList'
+import BlogPost from './pages/BlogPost'
+import Collections from './pages/Collections'
+import CollectionDetail from './pages/CollectionDetail'
+import { getTheme, cycleTheme, applyTheme, effectiveTheme, type Theme } from './theme'
 
-const THEME_TITLE = {
+// 主题按钮 title / aria-label：三个主题各一句，键必须是完整主题集合
+const THEME_TITLE: Record<Theme, string> = {
   auto: 'Theme: system (click to change)',
   light: 'Theme: light (click to change)',
   dark: 'Theme: dark (click to change)'
 }
 
-function ThemeIcon({ theme }) {
+function ThemeIcon({ theme }: { theme: Theme }) {
   if (theme === 'light') {
     return (
       <svg
@@ -79,7 +80,7 @@ function ThemeIcon({ theme }) {
 const NAV_LINKS = [
   { to: '/', label: 'Home', index: '01', end: true },
   { to: '/blog', label: 'Blog', index: '02', end: false },
-]
+] as const
 
 function ScrollManager() {
   const { pathname, hash } = useLocation()
@@ -100,7 +101,7 @@ function ScrollManager() {
 
 function Nav() {
   const [open, setOpen] = useState(false)
-  const [theme, setTheme] = useState(() => getTheme())
+  const [theme, setTheme] = useState<Theme>(() => getTheme())
   const { pathname } = useLocation()
 
   useEffect(() => {
@@ -123,7 +124,7 @@ function Nav() {
   useEffect(() => {
     document.body.classList.toggle('nav-open', open)
     if (!open) return () => document.body.classList.remove('nav-open')
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
     document.addEventListener('keydown', onKey)
@@ -135,7 +136,7 @@ function Nav() {
 
   const close = () => setOpen(false)
 
-  const linkClass = ({ isActive }) => (isActive ? 'is-active' : undefined)
+  const linkClass = ({ isActive }: { isActive: boolean }) => (isActive ? 'is-active' : undefined)
 
   return (
     <>

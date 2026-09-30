@@ -1,7 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export default function useAsync(fn, deps) {
-  const [state, setState] = useState({ status: 'loading', data: null })
+// 异步加载的三个状态；用联合字面量表达，避免 enum
+export type AsyncStatus = 'loading' | 'success' | 'error'
+
+interface AsyncState<T> {
+  status: AsyncStatus
+  data: T | null
+}
+
+export interface AsyncResult<T> extends AsyncState<T> {
+  retry: () => void
+}
+
+export default function useAsync<T>(fn: () => Promise<T>, deps: unknown[]): AsyncResult<T> {
+  const [state, setState] = useState<AsyncState<T>>({ status: 'loading', data: null })
   const [tick, setTick] = useState(0)
 
   useEffect(() => {

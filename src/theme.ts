@@ -1,26 +1,33 @@
 const THEME_KEY = 'site_theme'
-const THEMES = ['auto', 'light', 'dark']
 
-export function getTheme() {
+// 主题的三个取值 —— 同时作为运行时白名单与字面量联合类型的唯一来源
+const THEMES = ['auto', 'light', 'dark'] as const
+export type Theme = (typeof THEMES)[number]
+
+function isTheme(value: string | null): value is Theme {
+  return value !== null && (THEMES as readonly string[]).includes(value)
+}
+
+export function getTheme(): Theme {
   try {
     const stored = localStorage.getItem(THEME_KEY)
-    return THEMES.includes(stored) ? stored : 'auto'
+    return isTheme(stored) ? stored : 'auto'
   } catch (e) {
     return 'auto'
   }
 }
 
-export function systemPrefersDark() {
+export function systemPrefersDark(): boolean {
   if (typeof window === 'undefined' || !window.matchMedia) return false
   return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
-export function effectiveTheme(theme) {
+export function effectiveTheme(theme: Theme): 'light' | 'dark' {
   if (theme === 'light' || theme === 'dark') return theme
   return systemPrefersDark() ? 'dark' : 'light'
 }
 
-export function applyTheme(theme) {
+export function applyTheme(theme: Theme): void {
   const root = document.documentElement
   const effective = effectiveTheme(theme)
 
@@ -56,12 +63,12 @@ export function applyTheme(theme) {
   }
 }
 
-export function cycleTheme() {
-  const next = { auto: 'light', light: 'dark', dark: 'auto' }[getTheme()] || 'light'
+export function cycleTheme(): Theme {
+  const next: Theme = { auto: 'light', light: 'dark', dark: 'auto' }[getTheme()] as Theme
   applyTheme(next)
   return next
 }
 
-export function initTheme() {
+export function initTheme(): void {
   applyTheme(getTheme())
 }

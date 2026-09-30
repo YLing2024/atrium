@@ -9,28 +9,28 @@ import dart from 'highlight.js/lib/languages/dart'
 import dockerfile from 'highlight.js/lib/languages/dockerfile'
 import nginx from 'highlight.js/lib/languages/nginx'
 import protobuf from 'highlight.js/lib/languages/protobuf'
-import { fetchPost } from '../api.js'
-import { formatDate } from '../utils.js'
-import useAsync from '../hooks/useAsync.js'
-import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+import { fetchPost, type BlogPostDetail } from '../api'
+import { formatDate } from '../utils'
+import useAsync from '../hooks/useAsync'
+import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
 hljs.registerLanguage('dart', dart)
 hljs.registerLanguage('dockerfile', dockerfile)
 hljs.registerLanguage('nginx', nginx)
 hljs.registerLanguage('protobuf', protobuf)
 
-async function codeText(code) {
+async function codeText(code: HTMLElement | null): Promise<string> {
   const tbody = code?.querySelector('tbody')
   if (!tbody) return code?.textContent || ''
-  const lines = []
+  const lines: string[] = []
   tbody.querySelectorAll('tr').forEach((row) => {
     const td = row.querySelector('.hljs-ln-code')
-    if (td) lines.push(td.textContent.replace(/\n+$/, ''))
+    if (td) lines.push((td.textContent || '').replace(/\n+$/, ''))
   })
   return lines.join('\n')
 }
 
-async function copyText(text) {
+async function copyText(text: string): Promise<boolean> {
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
     try {
       await navigator.clipboard.writeText(text)
@@ -57,14 +57,23 @@ async function copyText(text) {
 // Heading text → stable DOM id for anchors and TOC jumps.
 // Plain sequence (sec-0, sec-1…), not the title text: CJK titles would be
 // percent-encoded into noise, and editing a title would break old deep links.
-function headingId(i) {
+function headingId(i: number): string {
   return `sec-${i}`
 }
 
+interface TocItem {
+  id: string
+  depth: string
+  text: string
+}
+
 export default function BlogPost() {
-  const { slug } = useParams()
-  const bodyRef = useRef(null)
-  const { status, data: post, retry } = useAsync(() => fetchPost(slug), [slug])
+  const { slug } = useParams<{ slug: string }>()
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const { status, data: post, retry } = useAsync<BlogPostDetail | null>(
+    () => fetchPost(slug as string),
+    [slug],
+  )
 
   // Scrolled past the article head → show the sticky bar
   const [scrolled, setScrolled] = useState(false)
@@ -74,16 +83,16 @@ export default function BlogPost() {
   const [tocOpen, setTocOpen] = useState(false)
   // After a TOC jump, hold the highlight so smooth scrolling can't override it
   const clickLockRef = useRef(0)
-  const [toc, setToc] = useState([])
+  const [toc, setToc] = useState<TocItem[]>([])
 
   // Title lives in its own region (an <h1> in the header). The body must never
   // contribute a second h1: any h1 in the markdown is demoted to h2.
-  const bodyHtml = useMemo(() => {
+  const bodyHtml = useMemo<string>(() => {
     if (!post?.content) return ''
     const raw = marked.parse(post.content)
     const clean = DOMPurify.sanitize(typeof raw === 'string' ? raw : '')
     const doc = new DOMParser().parseFromString(`<div id="post-root">${clean}</div>`, 'text/html')
-    const root = doc.getElementById('post-root')
+    const root = doc.getElementById('post-root')!
     root.querySelectorAll('h1').forEach((h) => {
       const h2 = doc.createElement('h2')
       h2.innerHTML = h.innerHTML
@@ -100,12 +109,13 @@ export default function BlogPost() {
       // No explicit language → leave it as plain text. Auto-detect mangles
       // mixed CJK snippets and writes a bogus `language-undefined` class.
       if (!lang) return
-      block.dataset.lang = lang
-      hljs.highlightElement(block)
+      const el = block as HTMLElement
+      el.dataset.lang = lang
+      hljs.highlightElement(el)
     })
 
     body.querySelectorAll('.post__body > table').forEach((table) => {
-      if (table.parentElement.classList.contains('post__table-wrap')) return
+      if (table.parentElement!.classList.contains('post__table-wrap')) return
       const wrap = document.createElement('div')
       wrap.className = 'post__table-wrap'
       wrap.setAttribute('tabindex', '0')
@@ -120,7 +130,7 @@ export default function BlogPost() {
       // Wrap in a non-scrolling container so the Copy button stays put while code scrolls
       const wrap = document.createElement('div')
       wrap.className = 'post__code-block'
-      pre.parentNode.insertBefore(wrap, pre)
+      pre.parentNode!.insertBefore(wrap, pre)
       wrap.appendChild(pre)
 
       const code = pre.querySelector('code')
@@ -129,7 +139,7 @@ export default function BlogPost() {
       button.className = 'post__copy'
       button.textContent = 'Copy'
       button.setAttribute('aria-label', 'Copy code')
-      button.addEventListener('click', async (e) => {
+      button.addEventListener('click', async (e: MouseEvent) => {
         e.preventDefault()
         const ok = await copyText(await codeText(code))
         button.textContent = ok ? 'Copied' : 'Copy failed'
@@ -146,8 +156,8 @@ export default function BlogPost() {
       if (!alive || !window.hljs?.lineNumbersBlockSync) return
       body.querySelectorAll('pre > code').forEach((block) => {
         if (block.querySelector('.hljs-ln')) return
-        if (!block.textContent.trim() && !block.dataset.lang) return
-        window.hljs.lineNumbersBlockSync(block, { singleLine: true })
+        if (!block.textContent!.trim() && !(block as HTMLElement).dataset.lang) return
+        window.hljs!.lineNumbersBlockSync!(block as HTMLElement, { singleLine: true })
       })
     })
     return () => {
@@ -169,7 +179,7 @@ export default function BlogPost() {
       headings.map((h, i) => ({
         id: h.id,
         depth: h.tagName.toLowerCase(),
-        text: h.textContent.trim(),
+        text: h.textContent!.trim(),
       })),
     )
     if (headings[0]) setActiveId(headings[0].id)
@@ -208,7 +218,7 @@ export default function BlogPost() {
   }, [status, post, bodyHtml, activeId])
 
   // Contents click: smooth-scroll to the heading; close the drawer on narrow screens
-  const scrollToHeading = (e, id) => {
+  const scrollToHeading = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
     const el = document.getElementById(id)
     if (!el) return
@@ -223,7 +233,7 @@ export default function BlogPost() {
   // Drawer: lock page scroll while open, close on Escape
   useEffect(() => {
     if (!tocOpen) return
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setTocOpen(false)
     }
     document.addEventListener('keydown', onKey)
@@ -273,7 +283,7 @@ export default function BlogPost() {
                 <h1 className="post__title">{post.title}</h1>
                 {post.subtitle ? <p className="post__subtitle">{post.subtitle}</p> : null}
                 <div className="post__meta">
-                  <time className="post-row__date" dateTime={post.created_at}>
+                  <time className="post-row__date" dateTime={post.created_at || undefined}>
                     {formatDate(post.created_at)}
                   </time>
                   {post.collection && (
@@ -284,7 +294,7 @@ export default function BlogPost() {
                       {post.collection.name}
                     </Link>
                   )}
-                  {post.tags?.length > 0 && (
+                  {post.tags && post.tags.length > 0 && (
                     <div className="post-row__tags">
                       {post.tags.map((tag) => (
                         <span className="tag" key={tag}>

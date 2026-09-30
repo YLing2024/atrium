@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { getCollections } from '../api.js'
-import useAsync from '../hooks/useAsync.js'
-import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+import { getCollections, type BlogCollection } from '../api'
+import useAsync from '../hooks/useAsync'
+import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
 export default function Collections() {
-  const { status, data, retry } = useAsync(getCollections, [])
+  const { status, data, retry } = useAsync<BlogCollection[]>(getCollections, [])
 
   return (
     <section className="page container collections">
@@ -12,15 +12,17 @@ export default function Collections() {
         <p className="kicker">Blog</p>
         <h1 className="blog-list__title">Collections</h1>
         <p className="blog-list__count">
-          {status === 'success' ? `${data.length} collections` : '—'}
+          {status === 'success' && data ? `${data.length} collections` : '—'}
         </p>
       </header>
 
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
-      {status === 'success' && data.length === 0 && <EmptyState message="No collections yet." />}
+      {status === 'success' && data && data.length === 0 && (
+        <EmptyState message="No collections yet." />
+      )}
 
-      {status === 'success' && data.length > 0 && (
+      {status === 'success' && data && data.length > 0 && (
         <div className="collections__grid">
           {data.map((collection, i) => (
             <Link

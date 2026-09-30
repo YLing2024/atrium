@@ -1,4 +1,16 @@
-export function LoadingState({ label = 'Loading…' }) {
+interface LoadingStateProps {
+  label?: string
+}
+
+interface ErrorStateProps {
+  onRetry?: () => void
+}
+
+interface EmptyStateProps {
+  message?: string
+}
+
+export function LoadingState({ label = 'Loading…' }: LoadingStateProps) {
   return (
     <p className="state" role="status">
       {label}
@@ -6,7 +18,7 @@ export function LoadingState({ label = 'Loading…' }) {
   )
 }
 
-export function ErrorState({ onRetry }) {
+export function ErrorState({ onRetry }: ErrorStateProps) {
   return (
     <div className="state" role="alert">
       <p>Failed to load. Check your connection and try again.</p>
@@ -19,6 +31,6 @@ export function ErrorState({ onRetry }) {
   )
 }
 
-export function EmptyState({ message = 'Nothing here yet.' }) {
+export function EmptyState({ message = 'Nothing here yet.' }: EmptyStateProps) {
   return <p className="state">{message}</p>
 }

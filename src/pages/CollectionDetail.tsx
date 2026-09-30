@@ -1,12 +1,20 @@
 import { Link, useParams } from 'react-router-dom'
-import { getCollection } from '../api.js'
-import { formatDate } from '../utils.js'
-import useAsync from '../hooks/useAsync.js'
-import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+import { getCollection, type BlogCollectionDetail } from '../api'
+import { formatDate } from '../utils'
+import useAsync from '../hooks/useAsync'
+import { LoadingState, ErrorState, EmptyState } from '../components/States'
+
+// 标签数组的保守收窄：后端字段可缺省，缺省时按空数组处理
+function postTags(post: { tags?: string[] | null }): string[] {
+  return post.tags || []
+}
 
 export default function CollectionDetail() {
-  const { slug } = useParams()
-  const { status, data: collection, retry } = useAsync(() => getCollection(slug), [slug])
+  const { slug } = useParams<{ slug: string }>()
+  const { status, data: collection, retry } = useAsync<BlogCollectionDetail | null>(
+    () => getCollection(slug as string),
+    [slug],
+  )
 
   return (
     <article className="page container collection">
@@ -33,7 +41,7 @@ export default function CollectionDetail() {
             <div className="blog-list__rows">
               {collection.posts.map((post, i) => (
                 <article className="post-row" key={post.id}>
-                  <time className="post-row__date" dateTime={post.created_at}>
+                  <time className="post-row__date" dateTime={post.created_at || undefined}>
                     {formatDate(post.created_at)}
                   </time>
                   <span className="post-row__num" aria-hidden="true">
@@ -44,9 +52,9 @@ export default function CollectionDetail() {
                       <h2 className="post-row__title">{post.title}</h2>
                       {post.excerpt && <p className="post-row__excerpt">{post.excerpt}</p>}
                     </Link>
-                    {post.tags?.length > 0 && (
+                    {postTags(post).length > 0 && (
                       <div className="post-row__tags">
-                        {post.tags.map((tag) => (
+                        {postTags(post).map((tag) => (
                           <span className="tag" key={tag}>
                             {tag}
                           </span>

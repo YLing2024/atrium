@@ -1,13 +1,18 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchPosts } from '../api.js'
-import { formatDate } from '../utils.js'
-import useAsync from '../hooks/useAsync.js'
-import { LoadingState, ErrorState, EmptyState } from '../components/States.jsx'
+import { fetchPosts, type BlogPostSummary } from '../api'
+import { formatDate } from '../utils'
+import useAsync from '../hooks/useAsync'
+import { LoadingState, ErrorState, EmptyState } from '../components/States'
+
+// 标签数组的保守收窄：后端字段可缺省，缺省时按空数组处理
+function postTags(post: { tags?: string[] | null }): string[] {
+  return post.tags || []
+}
 
 export default function BlogList() {
-  const { status, data, retry } = useAsync(fetchPosts, [])
-  const [query, setQuery] = useState('')
+  const { status, data, retry } = useAsync<BlogPostSummary[]>(fetchPosts, [])
+  const [query, setQuery] = useState<string>('')
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -35,7 +40,7 @@ export default function BlogList() {
         />
         <div className="blog-list__head-row">
           <p className="blog-list__count">
-            {status === 'success' ? `${data.length} posts` : '—'}
+            {status === 'success' && data ? `${data.length} posts` : '—'}
           </p>
           <Link className="blog-list__entry" to="/blog/collections">
             Collections <span aria-hidden="true">→</span>
@@ -45,8 +50,8 @@ export default function BlogList() {
 
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
-      {status === 'success' && data.length === 0 && <EmptyState message="No posts yet." />}
-      {status === 'success' && data.length > 0 && filtered.length === 0 && (
+      {status === 'success' && data && data.length === 0 && <EmptyState message="No posts yet." />}
+      {status === 'success' && data && data.length > 0 && filtered.length === 0 && (
         <EmptyState message="Nothing matches your search." />
       )}
 
@@ -54,7 +59,7 @@ export default function BlogList() {
         <div className="blog-list__rows">
           {filtered.map((post, i) => (
             <article className="post-row" key={post.id}>
-              <time className="post-row__date" dateTime={post.created_at}>
+              <time className="post-row__date" dateTime={post.created_at || undefined}>
                 {formatDate(post.created_at)}
               </time>
               <span className="post-row__num" aria-hidden="true">
@@ -65,7 +70,7 @@ export default function BlogList() {
                   <h2 className="post-row__title">{post.title}</h2>
                   {post.excerpt && <p className="post-row__excerpt">{post.excerpt}</p>}
                 </Link>
-                {(post.collection || post.tags?.length > 0) && (
+                {(post.collection || postTags(post).length > 0) && (
                   <div className="post-row__meta">
                     {post.collection && (
                       <Link
@@ -75,9 +80,9 @@ export default function BlogList() {
                         {post.collection.name}
                       </Link>
                     )}
-                    {post.tags?.length > 0 && (
+                    {postTags(post).length > 0 && (
                       <div className="post-row__tags">
-                        {post.tags.map((tag) => (
+                        {postTags(post).map((tag) => (
                           <span className="tag" key={tag}>
                             {tag}
                           </span>
