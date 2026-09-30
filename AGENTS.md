@@ -14,7 +14,7 @@
 
 | 项 | 值 |
 |---|---|
-| 框架 | React 18 + Vite 5 + react-router-dom 7 |
+| 框架 | React 18 + Vite 5 + react-router-dom 7 + TypeScript（`strict`，校验用 `npm run typecheck`） |
 | 样式 | 手写 CSS（`src/index.css`），**无 UI 库、无 Tailwind、无 CSS-in-JS** |
 | Markdown | `marked` + `dompurify`（必须经 DOMPurify 消毒后再 `dangerouslySetInnerHTML`） |
 | 高亮 | `highlight.js` + `highlightjs-line-numbers.js`（npm 包，主题 CSS 在 `public/hljs/`） |
@@ -25,19 +25,19 @@
 
 ```
 src/
-├── main.jsx / App.jsx     # 入口 + 路由 + Layout（顶栏、抽屉目录、页脚）
-├── api.js                 # 全部接口封装，API_BASE = '/api/blog'
-├── theme.js               # 深浅色：localStorage('site_theme') ∈ auto|light|dark，写 <html data-theme>
-├── utils.js               # formatDate 等纯函数
+├── main.tsx / App.tsx     # 入口 + 路由 + Layout（顶栏、抽屉目录、页脚）
+├── api.ts                 # 全部接口封装，API_BASE = '/api/blog'
+├── theme.ts               # 深浅色：localStorage('site_theme') ∈ auto|light|dark，写 <html data-theme>
+├── utils.ts               # formatDate 等纯函数
 ├── index.css              # 设计令牌 + 全站样式（唯一 CSS 文件）
-├── hooks/useAsync.js      # 异步加载 hook
-├── components/States.jsx  # 加载中 / 空 / 错误态
+├── hooks/useAsync.ts      # 异步加载 hook
+├── components/States.tsx  # 加载中 / 空 / 错误态
 └── pages/
-    ├── Home.jsx           # /
-    ├── BlogList.jsx       # /blog
-    ├── BlogPost.jsx       # /blog/:slug（详情渲染主文件）
-    ├── Collections.jsx    # /blog/collections
-    └── CollectionDetail.jsx
+    ├── Home.tsx           # /
+    ├── BlogList.tsx       # /blog
+    ├── BlogPost.tsx       # /blog/:slug（详情渲染主文件）
+    ├── Collections.tsx    # /blog/collections
+    └── CollectionDetail.tsx
 public/                    # fonts/、hljs/、favicon 等原样拷贝资源
 ```
 
@@ -51,14 +51,14 @@ public/                    # fonts/、hljs/、favicon 等原样拷贝资源
 | `/blog/collections` | Collections |
 | `/blog/collections/:slug` | CollectionDetail |
 
-详情页支持草稿预览：URL 带 `?preview=<短时效令牌>` 时服务端放行未发布文章（见 `api.js#fetchPost`）。
+详情页支持草稿预览：URL 带 `?preview=<短时效令牌>` 时服务端放行未发布文章（见 `api.ts#fetchPost`）。
 
 ## 命令
 
 ```bash
 npm install
 npm run dev      # Vite dev server（本地需要 blog-server :4000 在跑，dev 走相对 /api 需自行代理）
-npm run build    # 输出到 /var/www/homepage（vite.config.js 写死 outDir + emptyOutDir）
+npm run build    # 输出到 /var/www/homepage（vite.config.ts 写死 outDir + emptyOutDir）
 npm run preview
 ```
 
