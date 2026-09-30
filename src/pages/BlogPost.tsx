@@ -10,7 +10,7 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile'
 import nginx from 'highlight.js/lib/languages/nginx'
 import protobuf from 'highlight.js/lib/languages/protobuf'
 import { fetchPost, type BlogPostDetail } from '../api'
-import { formatDate } from '../utils'
+import { formatDate, headingId } from '../utils'
 import useAsync from '../hooks/useAsync'
 import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
@@ -52,13 +52,6 @@ async function copyText(text: string): Promise<boolean> {
   } catch {
     return false
   }
-}
-
-// Heading text → stable DOM id for anchors and TOC jumps.
-// Plain sequence (sec-0, sec-1…), not the title text: CJK titles would be
-// percent-encoded into noise, and editing a title would break old deep links.
-function headingId(i: number): string {
-  return `sec-${i}`
 }
 
 interface TocItem {
