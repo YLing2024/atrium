@@ -1,3 +1,5 @@
+[简体中文](README.md) ｜ [English](README.en.md)
+
 # atrium
 
 个人主页与博客前台的纯静态单页应用，自身不启动任何常驻进程。
@@ -25,13 +27,13 @@ npm run preview  # 预览构建产物
 
 本地开发需要博客后端（`atrium-blog`，`:4000`）在运行；`dev` 走相对路径 `/api`，需自行配置代理。
 
-`vite.config.js` 把 `outDir` 写死为 `/var/www/homepage` 且 `emptyOutDir: true`，**构建即部署**：`npm run build` 会先清空该目录，构建后无需重启任何进程。仓库里没有 `dist/`。
+`vite.config.ts` 把 `outDir` 默认写为 `/var/www/homepage`（可用 `BUILD_OUT_DIR` 覆盖）且 `emptyOutDir: true`，**构建即部署**：`npm run build` 会先清空该目录，构建后无需重启任何进程。仓库里没有 `dist/`。
 
 ## 配置
 
 本仓库**不持有任何环境变量**，代码不读取 `import.meta.env.VITE_*`，`.gitignore` 仅拦截本地文件（`node_modules/`、`dist/`、`data/`、`*.db`、`.env`、`PROJECT_MEMORY.md`）。
 
-接口地址是硬编码的相对路径，见 `src/api.js`：
+接口地址是硬编码的相对路径，见 `src/api.ts`：
 
 | 名称 | 默认值 | 说明 |
 |---|---|---|
