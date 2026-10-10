@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f6f3" />
+    <title>当前离线</title>
+    <style>
+      :root {
+        --bg: #f7f6f3;
+        --fg: #171512;
+        --muted: #6f6a63;
+        --line: rgba(23, 21, 18, 0.16);
+        --accent: #a05b0c;
+        --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #13110f;
+          --fg: #efeae3;
+          --muted: #a29b92;
+          --line: rgba(239, 234, 227, 0.16);
+          --accent: #c77c1f;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.6;
+        text-size-adjust: 100%;
+      }
+
+      .offline {
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .offline__mark {
+        display: block;
+        width: 12px;
+        height: 12px;
+        margin-bottom: 32px;
+        background: var(--accent);
+        transform: rotate(45deg);
+      }
+
+      .offline__rule {
+        height: 1px;
+        background: var(--line);
+      }
+
+      .offline h1 {
+        margin: 32px 0 12px;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
+
+      .offline p {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="offline">
+      <span class="offline__mark" aria-hidden="true"></span>
+      <div class="offline__rule" role="presentation"></div>
+      <h1>当前离线</h1>
+      <p>网络恢复后重新加载即可继续。</p>
+    </main>
+  </body>
+</html>
