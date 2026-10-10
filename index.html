@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f7f6f3" />
     <meta name="description" content="Yunling Zhang — a quiet corner of the web, made by hand. Interfaces on the front, infrastructure underneath." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Linden" />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171512'/%3E%3Crect x='26' y='26' width='12' height='12' fill='%23a05b0c' transform='rotate(45 32 32)'/%3E%3C/svg%3E"
@@ -28,16 +33,6 @@
       } catch (e) {}
     </script>
     <title>Yunling Zhang — A quiet corner of the web</title>
-    <script>
-      // 注销 Cloudreve 注册的根路径 Service Worker，避免其接管整个域名
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function (regs) {
-          regs.forEach(function (reg) {
-            reg.unregister()
-          })
-        })
-      }
-    </script>
   </head>
   <body>
     <div id="root"></div>
