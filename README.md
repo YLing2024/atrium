@@ -55,6 +55,17 @@ npm run preview  # 预览构建产物
 - 详情页唯一的 `<h1>` 是标题区 `post.title`；正文里的 `h1` 渲染时一律降级为 `h2`。
 - 副标题只读 `post.subtitle` 字段，为空不渲染；不从正文推断。
 
+## PWA
+
+主站可安装、可离线阅读。Service Worker 是手写单文件 `public/sw.js`（无构建步骤、无 workbox、无新增依赖），生产构建下由 `src/pwa.ts` 注册，scope 为 `/`。
+
+- **缓存白名单**：只缓存导航请求（network-first，依次回退同路径缓存、SPA 外壳 `/index.html`、`offline.html`）、`/assets/*`（cache-first）、`/fonts/*`、`/hljs/*`、`/icons/*` 与图片（stale-while-revalidate）、以及公开只读 `GET /api/blog/*`（stale-while-revalidate，离线读博客的来源）。
+- **其余一律不缓存**、直接放行：`/api/blog/admin/*`、`/api/admin/*`、`/_auth/*`、`/s/*`、`/term/*`、`/admin*`、任何非 GET、跨域请求，以及 URL 含 `preview=` 的草稿预览请求。
+- **更新机制**：`install` 时 `skipWaiting()`；`activate` 时删掉所有不属于当前版本的缓存并 `clients.claim()`；页面在 `controllerchange` 时自动刷新一次，保证重建部署后刷新或重开即可拿到新版本。开发态不注册，并主动注销遗留 worker。
+- **`sw.js` 不得被长缓存**：它自身不在 SW 缓存白名单内；部署时 nginx 需对 `/sw.js` 下发短缓存（当前对 `/sw.js`、`/service-worker.js`、`/workbox-*.js` 返回 404 的历史防御需由运维在部署时改掉）。
+- **图标重新生成**：`python3 scripts/gen-pwa-icons.py`（依赖本机 PIL，幂等，构图与 `index.html` 内联 favicon 一致，产物写入 `public/icons/`）。
+- **验证构建必须用独立输出目录**：禁止裸跑 `npm run build`（会清空 `/var/www/homepage`），改用 `BUILD_OUT_DIR=/tmp/homepage-verify npm run build`。
+
 ## 许可证
 
 MIT，见 [LICENSE](./LICENSE)。

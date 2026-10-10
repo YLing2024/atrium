@@ -111,6 +111,15 @@ npm run preview
 - 私有地址（认证中心域名、监控子域、服务器公网 IP）**一律不得硬编码**；需要时走构建时 `import.meta.env.VITE_*` 注入，仓库只提交 `.env.example`，真实 `.env` 由 `.gitignore` 拦截。本仓库目前**不持有任何环境变量**；`/admin/` 入口是相对路径跳转。
 - 渲染任何来自接口的 Markdown/HTML 前必须经 DOMPurify。
 
+## PWA
+
+- Service Worker 是**手写单文件** `public/sw.js`（无 workbox、无新增依赖），生产构建下由 `src/pwa.ts` 在 `load` 时注册，scope `/`；开发态不注册，并注销遗留 worker。
+- **缓存白名单制**：只有导航请求、`/assets/*`、`/fonts/*`、`/hljs/*`、`/icons/*`、图片、公开只读 `GET /api/blog/*` 允许缓存；其余一律 network-only 直接放行。改 `sw.js` 的 fetch 分支时，`/api/blog/admin/` 的判断必须排在 `/api/blog/` **之前**，且 URL 含 `preview=` 的请求绝不入缓存。
+- **更新可靠优先**：`install` → `skipWaiting()`；`activate` → 删掉所有非当前版本缓存 + `clients.claim()`；页面在 `controllerchange` 时自动刷新一次。不要改成"等所有标签页关闭才接管"。
+- `sw.js` **不得被长缓存**：它自身不在 SW 白名单内；部署时 nginx 需对 `/sw.js` 下发短缓存（当前对 `/sw.js` 返回 404 的历史防御须由运维在部署时改掉）。
+- 图标由 `python3 scripts/gen-pwa-icons.py` 生成（构图 = `index.html` 内联 favicon），改图形先改脚本再重跑，`public/icons/` 产物一并提交。
+- 验证构建**必须**显式覆盖输出目录，禁止裸跑 `npm run build`（会清空 `/var/www/homepage`）：`BUILD_OUT_DIR=/tmp/homepage-verify npm run build`。
+
 ## 已知坑
 
 - 构建产物在 `/var/www/homepage`，**仓库内没有 `dist/`**，别去仓库里找构建结果。

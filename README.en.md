@@ -55,6 +55,17 @@ API addresses are hard-coded relative paths, see `src/api.ts`:
 - The only `<h1>` on the detail page is the title area `post.title`; any `h1` in the body is downgraded to `h2` at render time.
 - The subtitle reads only the `post.subtitle` field and is not rendered when empty; it is never inferred from the body.
 
+## PWA
+
+The site is installable and can be read offline. The Service Worker is a hand-written single file, `public/sw.js` (no build step, no workbox, no new dependencies); production builds register it from `src/pwa.ts` with scope `/`.
+
+- **Cache whitelist**: only navigation requests (network-first, falling back to the same-path cache, the SPA shell `/index.html`, then `offline.html`), `/assets/*` (cache-first), `/fonts/*`, `/hljs/*`, `/icons/*` and images (stale-while-revalidate), and public read-only `GET /api/blog/*` (stale-while-revalidate, the source of offline reading).
+- **Everything else is never cached** and is passed straight through: `/api/blog/admin/*`, `/api/admin/*`, `/_auth/*`, `/s/*`, `/term/*`, `/admin*`, any non-GET request, cross-origin requests, and draft-preview URLs that carry `preview=`.
+- **Update mechanism**: `install` calls `skipWaiting()`; `activate` deletes every cache that is not the current version and calls `clients.claim()`; the page reloads once on `controllerchange`, so a rebuilt deployment reaches users on refresh or reopen. Development builds do not register and unregister any leftover worker.
+- **`sw.js` must not be long-cached**: it is not in the SW cache whitelist itself, and nginx must serve it with a short cache at deploy time (the current historical defence that returns 404 for `/sw.js`, `/service-worker.js` and `/workbox-*.js` has to be relaxed by ops during deployment).
+- **Regenerating icons**: `python3 scripts/gen-pwa-icons.py` (uses the local PIL, idempotent, same composition as the inline favicon in `index.html`, output in `public/icons/`).
+- **Verification builds must use a separate output directory**: never run a bare `npm run build` (it clears `/var/www/homepage`); use `BUILD_OUT_DIR=/tmp/homepage-verify npm run build`.
+
 ## License
 
 MIT, see [LICENSE](./LICENSE).
