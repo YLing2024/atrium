@@ -76,3 +76,35 @@ export async function getCollection(slug: string): Promise<BlogCollectionDetail 
   if (!res.ok) throw new Error(`Request failed (${res.status})`)
   return res.json() as Promise<BlogCollectionDetail>
 }
+
+// 应用中心（公开只读）—— 与 API_BASE 无关：走同源相对路径 /api/public/apps，
+// 不拼域名、不带 token；状态是实时的，显式绕过缓存。
+export type AppStatus = 'up' | 'auth' | 'degraded' | 'down' | 'idle' | 'unknown'
+
+export interface PublicApp {
+  id: string
+  name: string
+  category: string
+  desc?: string | null
+  url?: string | null
+  icon?: string | null
+  status?: AppStatus | null
+  latencyMs?: number | null
+  onDemand?: boolean | null
+}
+
+export interface PublicAppCategory {
+  id: string
+  name: string
+}
+
+export interface PublicAppsPayload {
+  categories?: PublicAppCategory[] | null
+  apps?: PublicApp[] | null
+}
+
+export async function fetchPublicApps(): Promise<PublicAppsPayload> {
+  const res = await fetch('/api/public/apps', { cache: 'no-store' })
+  if (!res.ok) throw new Error(`Request failed (${res.status})`)
+  return res.json() as Promise<PublicAppsPayload>
+}
