@@ -1678,3 +1678,190 @@ body.nav-open {
     line-height: 1.12;
   }
 }
+
+/* ---------- Apps (index) ---------- */
+
+.apps__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+/* 手动刷新：克制的文字按钮，不是实心按钮 */
+.apps__refresh {
+  padding: 0 0 3px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition:
+    color 0.14s var(--ease),
+    border-color 0.14s var(--ease);
+}
+
+.apps__refresh:disabled {
+  color: var(--faint);
+  border-color: transparent;
+  cursor: default;
+}
+
+.apps__refresh:hover:not(:disabled) {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+/* 刷新失败但仍有旧数据时的一行提示 */
+.apps__notice {
+  margin-top: 32px;
+  padding-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--accent-ink);
+  border-bottom: 1px solid var(--line);
+}
+
+.apps__group {
+  margin-top: 56px;
+}
+
+.apps__group-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 16px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  border-bottom: 1px solid var(--line);
+}
+
+.apps__group-count {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--faint);
+}
+
+/* 发丝线网格：1px 间隙露出底色作分隔线，无阴影 */
+.apps__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.app-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 172px;
+  padding: 28px 24px;
+  background: var(--bg);
+  transition: background-color 0.14s var(--ease);
+}
+
+/* 只有带地址（<a>）的卡片有 hover 反馈；纯展示卡片不位移 */
+.app-card[href]:hover {
+  background: var(--surface);
+}
+
+.app-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 6px;
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+
+.app-card__initial {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.app-card__name {
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--fg);
+}
+
+.app-card__desc {
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.app-card__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.app-card__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--fg);
+  border: 1px solid var(--fg);
+}
+
+.app-card__dot--idle {
+  background: transparent;
+  border-color: var(--faint);
+}
+
+.app-card__dot--alert {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.app-card__status {
+  white-space: nowrap;
+}
+
+.app-card__latency {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+
+@media (max-width: 860px) {
+  .apps__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .apps__meta {
+    align-items: center;
+  }
+  .apps__grid {
+    grid-template-columns: 1fr;
+  }
+}

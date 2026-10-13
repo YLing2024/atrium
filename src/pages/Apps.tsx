@@ -35,7 +35,7 @@ function AppCard({ app }: { app: PublicApp }) {
     )
   }
 
-  return <div className="app-card app-card--static">{body}</div>
+  return <div className="app-card">{body}</div>
 }
 
 export default function Apps() {
