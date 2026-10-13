@@ -5,6 +5,7 @@ import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
 import Collections from './pages/Collections'
 import CollectionDetail from './pages/CollectionDetail'
+import Apps from './pages/Apps'
 import { getTheme, cycleTheme, applyTheme, effectiveTheme, type Theme } from './theme'
 
 // 主题按钮 title / aria-label：三个主题各一句，键必须是完整主题集合
@@ -80,6 +81,7 @@ function ThemeIcon({ theme }: { theme: Theme }) {
 const NAV_LINKS = [
   { to: '/', label: 'Home', index: '01', end: true },
   { to: '/blog', label: 'Blog', index: '02', end: false },
+  { to: '/apps', label: 'Apps', index: '03', end: false },
 ] as const
 
 function ScrollManager() {
@@ -233,6 +235,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="apps" element={<Apps />} />
         <Route path="blog" element={<BlogList />} />
         <Route path="blog/collections" element={<Collections />} />
         <Route path="blog/collections/:slug" element={<CollectionDetail />} />
