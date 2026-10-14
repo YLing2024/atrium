@@ -10,6 +10,7 @@ function postTags(post: { tags?: string[] | null }): string[] {
   return post.tags || []
 }
 
+/** 博客列表 `/blog`：按标题 / 摘要 / 标签在前端本地过滤，渲染为朴素列表。 */
 export default function BlogList() {
   const { status, data, retry } = useAsync<BlogPostSummary[]>(fetchPosts, [])
   const [query, setQuery] = useState<string>('')
@@ -26,27 +27,23 @@ export default function BlogList() {
   }, [data, query])
 
   return (
-    <section className="page container blog-list">
-      <header className="blog-list__head">
-        <p className="kicker">Blog</p>
-        <h1 className="blog-list__title">Writing</h1>
+    <section>
+      <h1>Writing</h1>
+
+      <p>
         <input
-          className="blog-list__search"
           type="search"
           placeholder="Search by title, excerpt or tag…"
           aria-label="Search articles"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <div className="blog-list__head-row">
-          <p className="blog-list__count">
-            {status === 'success' && data ? `${data.length} posts` : '—'}
-          </p>
-          <Link className="blog-list__entry" to="/blog/collections">
-            Collections <span aria-hidden="true">→</span>
-          </Link>
-        </div>
-      </header>
+      </p>
+
+      <p>
+        {status === 'success' && data ? `${data.length} posts` : '—'}{' '}
+        <Link to="/blog/collections">Collections</Link>
+      </p>
 
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
@@ -56,45 +53,26 @@ export default function BlogList() {
       )}
 
       {status === 'success' && filtered.length > 0 && (
-        <div className="blog-list__rows">
-          {filtered.map((post, i) => (
-            <article className="post-row" key={post.id}>
-              <time className="post-row__date" dateTime={post.created_at || undefined}>
-                {formatDate(post.created_at)}
-              </time>
-              <span className="post-row__num" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <div className="post-row__cell">
-                <Link className="post-row__main" to={`/blog/${post.public_id || post.slug}`}>
-                  <h2 className="post-row__title">{post.title}</h2>
-                  {post.excerpt && <p className="post-row__excerpt">{post.excerpt}</p>}
-                </Link>
-                {(post.collection || postTags(post).length > 0) && (
-                  <div className="post-row__meta">
-                    {post.collection && (
-                      <Link
-                        className="collection-badge"
-                        to={`/blog/collections/${post.collection.public_id || post.collection.slug}`}
-                      >
-                        {post.collection.name}
-                      </Link>
-                    )}
-                    {postTags(post).length > 0 && (
-                      <div className="post-row__tags">
-                        {postTags(post).map((tag) => (
-                          <span className="tag" key={tag}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </article>
+        <ul>
+          {filtered.map((post) => (
+            <li key={post.id}>
+              <time dateTime={post.created_at || undefined}>{formatDate(post.created_at)}</time>{' '}
+              <Link to={`/blog/${post.public_id || post.slug}`}>{post.title}</Link>
+              {post.excerpt && <p>{post.excerpt}</p>}
+              {post.collection && (
+                <p>
+                  Collection:{' '}
+                  <Link
+                    to={`/blog/collections/${post.collection.public_id || post.collection.slug}`}
+                  >
+                    {post.collection.name}
+                  </Link>
+                </p>
+              )}
+              {postTags(post).length > 0 && <p>Tags: {postTags(post).join(', ')}</p>}
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </section>
   )
