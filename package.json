@@ -13,10 +13,14 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\" --max-warnings 30",
+    "check:tokens": "node scripts/check-tokens.mjs",
     "test": "node --test",
-    "check": "npm run typecheck && npm run lint && npm run lint:css && npm test"
+    "check": "npm run typecheck && npm run lint && npm run lint:css && npm run check:tokens && npm test"
   },
   "dependencies": {
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "dompurify": "^3.4.13",
     "highlight.js": "^11.11.1",
     "highlightjs-line-numbers.js": "^2.9.1",

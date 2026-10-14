@@ -1,36 +1,43 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchPublicApps, type PublicApp, type PublicAppsPayload } from '../api'
-import { STATUS_LABEL, groupApps, latencyText, normalizeStatus } from '../appStatus'
+import { AppIcon } from '../appIcons'
+import { STATUS_LABEL, groupApps, isAbnormal, latencyText, normalizeStatus } from '../appStatus'
 import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
 const REFRESH_MS = 30000
 
-/**
- * 单条应用：应用名（有对外地址则可点，新标签打开）+ 状态文字。
- * 状态一律用文字表达（正常 / 休眠 / 异常…），不再用状态点与图标。
- */
-function AppRow({ app }: { app: PublicApp }) {
+function AppCard({ app }: { app: PublicApp }) {
   const status = normalizeStatus(app.status)
   const latency = latencyText(app.latencyMs, app.status)
+  const tone = isAbnormal(app.status) ? 'alert' : status === 'idle' ? 'idle' : 'ok'
 
-  return (
-    <li>
-      {app.url ? (
-        <a href={app.url} target="_blank" rel="noopener noreferrer">
-          {app.name}
-        </a>
-      ) : (
-        app.name
-      )}
-      {app.desc ? ` — ${app.desc}` : null}
-      {' — '}
-      {STATUS_LABEL[status]}
-      {latency ? ` ${latency}` : null}
-    </li>
+  const body = (
+    <>
+      <span className="app-card__icon" aria-hidden="true">
+        <AppIcon name={app.icon} fallback={app.name} />
+      </span>
+      <h3 className="app-card__name">{app.name}</h3>
+      {app.desc ? <p className="app-card__desc">{app.desc}</p> : null}
+      <span className="app-card__foot">
+        <span className={`app-card__dot app-card__dot--${tone}`} aria-hidden="true" />
+        <span className="app-card__status">{STATUS_LABEL[status]}</span>
+        {latency && <span className="app-card__latency">{latency}</span>}
+      </span>
+    </>
   )
+
+  // 有对外地址才可点；没有地址的基础服务是纯展示。
+  if (app.url) {
+    return (
+      <a className="app-card" href={app.url} target="_blank" rel="noopener noreferrer">
+        {body}
+      </a>
+    )
+  }
+
+  return <div className="app-card">{body}</div>
 }
 
-/** 应用中心 `/apps`：同源 `GET /api/public/apps` 的纯文本列表；分组与状态逻辑保留。 */
 export default function Apps() {
   const [data, setData] = useState<PublicAppsPayload | null>(null)
   const [failed, setFailed] = useState(false)
@@ -81,31 +88,40 @@ export default function Apps() {
   const groups = groupApps(categories, apps)
 
   return (
-    <section>
-      <h1>Apps</h1>
-      <p>
-        {data ? `${apps.length} apps` : '—'}{' '}
-        <button type="button" onClick={load} disabled={loading}>
-          刷新
-        </button>
-      </p>
+    <section className="page container apps">
+      <header className="blog-list__head">
+        <p className="kicker">Index</p>
+        <h1 className="blog-list__title">Apps</h1>
+        <div className="apps__meta">
+          <p className="blog-list__count">{data ? `${apps.length} apps` : '—'}</p>
+          <button
+            type="button"
+            className="apps__refresh"
+            onClick={load}
+            disabled={loading}
+          >
+            刷新
+          </button>
+        </div>
+      </header>
 
-      {failed && data && <p>暂时无法更新</p>}
+      {failed && data && <p className="apps__notice">暂时无法更新</p>}
 
       {!data && loading && <LoadingState />}
       {!data && !loading && failed && <ErrorState onRetry={load} />}
       {data && apps.length === 0 && <EmptyState message="暂无应用。" />}
 
       {groups.map((group) => (
-        <section key={group.id}>
-          <h2>
-            {group.name} ({group.apps.length})
+        <section className="apps__group" key={group.id}>
+          <h2 className="apps__group-title">
+            {group.name}
+            <span className="apps__group-count">{group.apps.length}</span>
           </h2>
-          <ul>
+          <div className="apps__grid">
             {group.apps.map((app) => (
-              <AppRow key={app.id} app={app} />
+              <AppCard key={app.id} app={app} />
             ))}
-          </ul>
+          </div>
         </section>
       ))}
     </section>

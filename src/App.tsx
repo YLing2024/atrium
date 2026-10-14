@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, NavLink, Link, Outlet, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import BlogList from './pages/BlogList'
@@ -6,32 +6,84 @@ import BlogPost from './pages/BlogPost'
 import Collections from './pages/Collections'
 import CollectionDetail from './pages/CollectionDetail'
 import Apps from './pages/Apps'
-import { getTheme, nextTheme, applyTheme, type Theme } from './theme'
+import { getTheme, cycleTheme, applyTheme, effectiveTheme, type Theme } from './theme'
 
-/** 主题按钮的可见文字，三态各一个词。 */
-const THEME_LABEL: Record<Theme, string> = {
-  auto: 'Auto',
-  light: 'Light',
-  dark: 'Dark',
-}
-
-/** 主题按钮的 title 与 aria-label，说明当前态与点击行为。 */
+// 主题按钮 title / aria-label：三个主题各一句，键必须是完整主题集合
 const THEME_TITLE: Record<Theme, string> = {
   auto: 'Theme: system (click to change)',
   light: 'Theme: light (click to change)',
-  dark: 'Theme: dark (click to change)',
+  dark: 'Theme: dark (click to change)'
+}
+
+function ThemeIcon({ theme }: { theme: Theme }) {
+  if (theme === 'light') {
+    return (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <line x1="12" y1="2" x2="12" y2="4" />
+        <line x1="12" y1="20" x2="12" y2="22" />
+        <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+        <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+        <line x1="2" y1="12" x2="4" y2="12" />
+        <line x1="20" y1="12" x2="22" y2="12" />
+        <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
+        <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
+      </svg>
+    )
+  }
+
+  if (theme === 'dark') {
+    return (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" />
+    </svg>
+  )
 }
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/blog', label: 'Blog', end: false },
-  { to: '/apps', label: 'Apps', end: false },
+  { to: '/', label: 'Home', index: '01', end: true },
+  { to: '/blog', label: 'Blog', index: '02', end: false },
+  { to: '/apps', label: 'Apps', index: '03', end: false },
 ] as const
 
-/**
- * 路由切换后的滚动处理：带 hash 时滚到对应锚点，否则回到页首。
- * 用浏览器默认的即时滚动，不再做平滑滚动或滚动高亮。
- */
 function ScrollManager() {
   const { pathname, hash } = useLocation()
 
@@ -39,7 +91,7 @@ function ScrollManager() {
     if (hash) {
       const el = document.getElementById(hash.slice(1))
       if (el) {
-        el.scrollIntoView()
+        el.scrollIntoView({ behavior: 'smooth' })
         return
       }
     }
@@ -49,18 +101,19 @@ function ScrollManager() {
   return null
 }
 
-/**
- * 顶栏：品牌菱形 + 行内导航 + 主题按钮。
- * 没有抽屉、没有图标绘制；窄屏由浏览器自动换行。
- */
 function Nav() {
+  const [open, setOpen] = useState(false)
   const [theme, setTheme] = useState<Theme>(() => getTheme())
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     applyTheme(theme)
   }, [theme])
 
-  // auto 态跟随系统深浅色变化，用户不用操作也保持在正确配色
   useEffect(() => {
     if (theme !== 'auto') return
     if (typeof window === 'undefined' || !window.matchMedia) return
@@ -70,52 +123,110 @@ function Nav() {
     return () => mq.removeEventListener('change', onChange)
   }, [theme])
 
+  useEffect(() => {
+    document.body.classList.toggle('nav-open', open)
+    if (!open) return () => document.body.classList.remove('nav-open')
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.classList.remove('nav-open')
+    }
+  }, [open])
+
+  const close = () => setOpen(false)
+
+  const linkClass = ({ isActive }: { isActive: boolean }) => (isActive ? 'is-active' : undefined)
+
   return (
-    <header>
-      <nav className="container" aria-label="Primary">
-        <Link to="/" aria-label="Linden Zhang — Home">
-          <span aria-hidden="true">◇</span>
-        </Link>{' '}
-        {NAV_LINKS.map(({ to, label, end }) => (
-          <Fragment key={to}>
-            <NavLink to={to} end={end}>
+    <>
+      <header className="nav">
+        <div className="container nav__inner">
+          <Link className="nav__brand" to="/" aria-label="Yunling Zhang — Home">
+            <span className="nav__brand-mark" aria-hidden="true" />
+          </Link>
+
+          <nav className="nav__links" aria-label="Primary">
+            {NAV_LINKS.map(({ to, label, index, end }) => (
+              <NavLink key={to} to={to} end={end} className={linkClass}>
+                <span className="nav__index" aria-hidden="true">
+                  {index}
+                </span>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="nav__actions">
+            <button
+              type="button"
+              className="nav__theme"
+              onClick={() => setTheme(cycleTheme())}
+              title={THEME_TITLE[theme]}
+              aria-label={THEME_TITLE[theme]}
+            >
+              <ThemeIcon theme={theme} />
+            </button>
+
+            <button
+              type="button"
+              className={`nav__toggle${open ? ' is-open' : ''}`}
+              aria-expanded={open}
+              aria-controls="site-menu"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span />
+              <span />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div
+        id="site-menu"
+        className={`nav-drawer${open ? ' is-open' : ''}`}
+        aria-hidden={!open}
+        onClick={close}
+      >
+        <nav className="container nav-drawer__inner" aria-label="Mobile">
+          {NAV_LINKS.map(({ to, label, index, end }) => (
+            <NavLink key={to} to={to} end={end} className="nav-drawer__link" onClick={close}>
+              <span className="nav-drawer__num" aria-hidden="true">
+                {index}
+              </span>
               {label}
-            </NavLink>{' '}
-          </Fragment>
-        ))}
-        <button
-          type="button"
-          onClick={() => setTheme(nextTheme(theme))}
-          title={THEME_TITLE[theme]}
-          aria-label={THEME_TITLE[theme]}
-        >
-          {THEME_LABEL[theme]}
-        </button>
-      </nav>
-    </header>
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+    </>
   )
 }
 
-/** 页脚：纯文本。 */
 function Footer() {
   return (
-    <footer className="container">
-      <p>© 2026 Linden Zhang</p>
+    <footer className="footer">
+      <div className="container footer__inner">
+        <span>© 2026 Yunling Zhang</span>
+        <span className="footer__note">Made by hand</span>
+      </div>
     </footer>
   )
 }
 
-/** 站点外壳：顶栏 + 主内容（限宽）+ 页脚。 */
 function Layout() {
   return (
-    <>
+    <div className="swiss">
       <ScrollManager />
       <Nav />
-      <main className="container">
+      <main>
         <Outlet />
       </main>
       <Footer />
-    </>
+    </div>
   )
 }
 
