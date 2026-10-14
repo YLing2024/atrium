@@ -15,21 +15,21 @@
 | 项 | 值 |
 |---|---|
 | 框架 | React 18 + Vite 5 + react-router-dom 7 + TypeScript（`strict`，校验用 `npm run typecheck`） |
-| 样式 | 手写 CSS（`src/index.css`），**无 UI 库、无 Tailwind、无 CSS-in-JS** |
+| 样式 | 朴素 CSS（`src/index.css`，≤60 行，仅保留最低限度规则），**无 UI 库、无 Tailwind、无 CSS-in-JS** |
 | Markdown | `marked` + `dompurify`（必须经 DOMPurify 消毒后再 `dangerouslySetInnerHTML`） |
 | 高亮 | `highlight.js` + `highlightjs-line-numbers.js`（npm 包，主题 CSS 在 `public/hljs/`） |
-| 字体 | 自托管 `public/fonts/`：Inter Tight / Inter / JetBrains Mono（latin 子集） |
+| 字体 | 系统默认（不再自托管，`src/index.css` 不写 `font-family`） |
 | 运行时 | Node 24 / npm 11（服务器 nvm v24.19.0） |
 
 ## 目录结构
 
 ```
 src/
-├── main.tsx / App.tsx     # 入口 + 路由 + Layout（顶栏、抽屉目录、页脚）
+├── main.tsx / App.tsx     # 入口 + 路由 + Layout（顶栏、页脚）
 ├── api.ts                 # 全部接口封装，API_BASE = '/api/blog'
 ├── theme.ts               # 深浅色：localStorage('site_theme') ∈ auto|light|dark，写 <html data-theme>
 ├── utils.ts               # formatDate 等纯函数
-├── index.css              # 设计令牌 + 全站样式（唯一 CSS 文件）
+├── index.css              # 朴素样式（唯一 CSS 文件，仅保留最低限度规则）
 ├── hooks/useAsync.ts      # 异步加载 hook
 ├── components/States.tsx  # 加载中 / 空 / 错误态
 └── pages/
@@ -38,7 +38,7 @@ src/
     ├── BlogPost.tsx       # /blog/:slug（详情渲染主文件）
     ├── Collections.tsx    # /blog/collections
     └── CollectionDetail.tsx
-public/                    # fonts/、hljs/、favicon 等原样拷贝资源
+public/                    # hljs/、icons/、favicon 等原样拷贝资源
 ```
 
 ## 路由
@@ -71,39 +71,39 @@ npm run preview
 - 另有**镜像域名**体系（配置在同目录下的另一份 conf）。**改 nginx 时两套域名要同步对齐**，否则会出现「镜像站行为和主站不一样」。
 - 前端无 systemd 单元。
 
-## 设计系统（硬性，与 admin-web / quotahub / v2link 同一套）
+## 朴素排版（硬性）
 
-```css
---bg #f7f6f3  --surface #fbfaf8  --fg #171512  --muted #6f6a63  --faint #9b958d
---line rgba(23,21,18,.16)  --accent #a05b0c  --accent-ink #7c4508
-/* 深色（prefers-color-scheme + [data-theme] 手动覆盖）*/
---bg #13110f  --surface #191715  --fg #efeae3  --accent #c77c1f
---ease cubic-bezier(.23,1,.32,1)  --maxw 1120px
-```
+全站**不套自定义设计系统**，交回浏览器默认渲染。`src/index.css` 是唯一 CSS 文件，**≤ 60 行**，只允许保留需求文档列出的 5 条豁免，并在注释里写明理由：
 
-- Swiss 国际主义：8pt 网格、发丝线分隔（**不用阴影卡片**）、直角（radius 0）、中性色 ~90%、琥珀只做点缀。
-- 动效一条缓动曲线，hover ≤150ms，仅抽屉可以更长。
-- 字体分工：Inter Tight（标题）/ Inter（正文）/ JetBrains Mono（标签、数字，常配合大写小字号）。
+1. **正文限宽**：`.container` `max-width: 65ch~72ch` + 左右内边距——否则宽屏无法阅读；
+2. `img, video { max-width: 100%; height: auto }`——防止媒体撑破页面；
+3. `pre, table { overflow-x: auto }`——代码块/表格横向滚动；
+4. `color-scheme: light dark`（`:root`）+ 按 `data-theme` 覆盖为 `light`/`dark`——用浏览器默认深浅色；
+5. 焦点可见性：**不得**写 `outline: none`，保留浏览器默认焦点环。
+
+除此之外，`src/index.css` 里**不得出现**：颜色字面量（`#hex` / `rgb()` / `hsl()` / 颜色关键字）、自定义 `font-family`（只允许 `monospace` 关键字）、`border-radius`、`box-shadow`、`transition`、`animation`。组件层同样不得写颜色 / 圆角 / 字号。
+
+- 结构一律朴素 HTML：顶栏是普通 `<nav>` + 行内链接，列表页用 `<ul>/<li>`，详情页目录是正文前的普通链接列表；**没有**卡片、抽屉、图标绘制、装饰性伪元素、hover 位移。
 
 ## 文案与内容红线
 
 以下内容**不要"顺手优化"**，改了会被打回：
 
 - Hero 名言必须保留原句：**「立志欲坚不欲锐，成功在久不在速。—— 张孝祥」**。
-- 左上角品牌是**纯几何菱形标记**，不放名字文字。
+- 左上角品牌是**纯几何菱形标记**（朴素化后用字符 `◇` 表达，不加任何样式），不放名字文字。
 - 中文页面展示名一律 **Linden Zhang**，不用中文名。
 - 文案唯美克制：**禁 emoji、禁鸡汤 / AI 腔、禁网络热词**。UI 上不要写技术说明性文案。
 
 ## 博客详情页的标题与副标题（强约束）
 
 - 详情页唯一的 `<h1>` 是文章标题 `post.title`；正文里出现的 `h1` 在渲染时**一律降级为 `h2`**（h1 属于标题区）。
-- 副标题是**独立字段** `post.subtitle`（后端返回、后台表单填写），非空时渲染为 `<p class="post__subtitle">`（样式在 `index.css`）；留空不渲染。
+- 副标题是**独立字段** `post.subtitle`（后端返回、后台表单填写），非空时渲染为 `<p class="post__subtitle">`（类名仅作语义对口，不再有自定义样式）；留空不渲染。
 - **禁止**"从正文里猜副标题"的隐式推断（曾实现过：取开头 h1 当副标题，已被用户否决，改为读字段）。
 - 目录收集 `h1, h2, h3`，锚点是纯序号 `sec-N`（不用标题 slug）。
 
 ## 移动端
 
-- 窄屏**绝不隐藏导航**：用右侧滑出抽屉（顶部「目录」按钮触发），不要放到正文开头。
+- 窄屏**绝不隐藏导航**：顶栏链接保持可见，由浏览器自动换行；不要做抽屉或汉堡菜单。
 - TOC 锚点用纯序号 `sec-N`，**不要用标题 slug**（中文编码会乱、改标题即失效）。
 
 ## 安全约定
@@ -114,7 +114,7 @@ npm run preview
 ## PWA
 
 - Service Worker 是**手写单文件** `public/sw.js`（无 workbox、无新增依赖），生产构建下由 `src/pwa.ts` 在 `load` 时注册，scope `/`；开发态不注册，并注销遗留 worker。
-- **缓存白名单制**：只有导航请求、`/assets/*`、`/fonts/*`、`/hljs/*`、`/icons/*`、图片、公开只读 `GET /api/blog/*` 允许缓存；其余一律 network-only 直接放行。改 `sw.js` 的 fetch 分支时，`/api/blog/admin/` 的判断必须排在 `/api/blog/` **之前**，且 URL 含 `preview=` 的请求绝不入缓存。
+- **缓存白名单制**：只有导航请求、`/assets/*`、`/hljs/*`、`/icons/*`、图片、公开只读 `GET /api/blog/*` 允许缓存；其余一律 network-only 直接放行。改 `sw.js` 的 fetch 分支时，`/api/blog/admin/` 的判断必须排在 `/api/blog/` **之前**，且 URL 含 `preview=` 的请求绝不入缓存。
 - **更新可靠优先**：`install` → `skipWaiting()`；`activate` → 删掉所有非当前版本缓存 + `clients.claim()`；页面在 `controllerchange` 时自动刷新一次。不要改成"等所有标签页关闭才接管"。
 - `sw.js` **不得被长缓存**：它自身不在 SW 白名单内；部署时 nginx 需对 `/sw.js` 下发短缓存（当前对 `/sw.js` 返回 404 的历史防御须由运维在部署时改掉）。
 - 图标由 `python3 scripts/gen-pwa-icons.py` 生成（构图 = `index.html` 内联 favicon），改图形先改脚本再重跑，`public/icons/` 产物一并提交。
@@ -124,7 +124,7 @@ npm run preview
 
 - 构建产物在 `/var/www/homepage`，**仓库内没有 `dist/`**，别去仓库里找构建结果。
 - `blog/web`、`blog/admin`（在 `atrium-blog` 里）是**已停用的旧前端**，真正的博客前台就是本仓库、后台是 `atrium-console`，不要去改旧目录。
-- 改 `index.css` 里的设计令牌会同时影响全站，改前确认深浅色两套值都同步。
+- `src/index.css` 是朴素排版的唯一 CSS：不得引入颜色字面量、自定义 `font-family`（仅 `monospace`）、`border-radius` / `box-shadow` / `transition` / `animation`；改动前先确认仍 **≤ 60 行**。
 
 ## 项目记忆（PROJECT_MEMORY.md）
 

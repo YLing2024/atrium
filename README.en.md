@@ -4,17 +4,19 @@
 
 A purely static single-page app for the personal homepage and blog frontend. It starts no long-running process of its own.
 
+The whole site uses **plain typography**: no custom design system, just the browser defaults. `src/index.css` keeps only the minimum that makes the pages usable (a readable content width, media that never overflows, horizontal scroll for code blocks and tables, `color-scheme` for light/dark, and the default focus ring).
+
 ## What it does
 
-- Home: hero title row, About, latest three posts, Contact.
+- Home: hero, About, latest three posts, Contact.
 - Blog list `/blog`: filters locally by title, excerpt and tag in the browser, and shows the total post count.
 - Post detail `/blog/:slug`: `marked` renders and DOMPurify sanitizes; code blocks are highlighted, numbered and copyable in one click.
 - Collection list `/blog/collections` and collection detail `/blog/collections/:slug`, showing the posts and count under a collection.
-- Table of contents: collects `h1`/`h2`/`h3` from the body; anchors use plain sequence numbers `sec-N`; a sidebar on wide screens, a slide-out drawer on narrow screens.
+- Table of contents: collects `h1`/`h2`/`h3` from the body; anchors use plain sequence numbers `sec-N`; rendered as a plain list of links before the article.
 - Draft preview: when the URL carries `?preview=<short-lived token>`, the server lets unpublished posts through and the title area is marked Draft preview.
-- Light/dark theme: `auto` / `light` / `dark`, stored in `localStorage` as `site_theme`, applied before the first frame to avoid a flash.
+- Light/dark theme: `auto` / `light` / `dark`, stored in `localStorage` as `site_theme`, toggling `color-scheme` only.
 - Post links prefer the snowflake ID `public_id`; older posts without one fall back to `slug`.
-- Navigation is never hidden on narrow screens; it becomes a right-side slide-out drawer.
+- The top navigation is visible at every viewport and wraps automatically on narrow screens.
 
 ## Quick start
 
@@ -59,7 +61,7 @@ API addresses are hard-coded relative paths, see `src/api.ts`:
 
 The site is installable and can be read offline. The Service Worker is a hand-written single file, `public/sw.js` (no build step, no workbox, no new dependencies); production builds register it from `src/pwa.ts` with scope `/`.
 
-- **Cache whitelist**: only navigation requests (network-first, falling back to the same-path cache, the SPA shell `/index.html`, then `offline.html`), `/assets/*` (cache-first), `/fonts/*`, `/hljs/*`, `/icons/*` and images (stale-while-revalidate), and public read-only `GET /api/blog/*` (stale-while-revalidate, the source of offline reading).
+- **Cache whitelist**: only navigation requests (network-first, falling back to the same-path cache, the SPA shell `/index.html`, then `offline.html`), `/assets/*` (cache-first), `/hljs/*`, `/icons/*` and images (stale-while-revalidate), and public read-only `GET /api/blog/*` (stale-while-revalidate, the source of offline reading).
 - **Everything else is never cached** and is passed straight through: `/api/blog/admin/*`, `/api/admin/*`, `/_auth/*`, `/s/*`, `/term/*`, `/admin*`, any non-GET request, cross-origin requests, and draft-preview URLs that carry `preview=`.
 - **Update mechanism**: `install` calls `skipWaiting()`; `activate` deletes every cache that is not the current version and calls `clients.claim()`; the page reloads once on `controllerchange`, so a rebuilt deployment reaches users on refresh or reopen. Development builds do not register and unregister any leftover worker.
 - **`sw.js` must not be long-cached**: it is not in the SW cache whitelist itself, and nginx must serve it with a short cache at deploy time (the current historical defence that returns 404 for `/sw.js`, `/service-worker.js` and `/workbox-*.js` has to be relaxed by ops during deployment).

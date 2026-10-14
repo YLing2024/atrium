@@ -4,17 +4,19 @@
 
 个人主页与博客前台的纯静态单页应用，自身不启动任何常驻进程。
 
+全站为**朴素排版**：不套自定义设计系统，交回浏览器默认渲染；`src/index.css` 只保留让页面能用的最低限度规则（正文限宽、媒体不溢出、代码块/表格横向滚动、深浅色 `color-scheme`、默认焦点环）。
+
 ## 它能做什么
 
-- 首页：Hero 横排标题、About、最新三篇文章、Contact。
+- 首页：Hero、About、最新三篇文章、Contact。
 - 博客列表 `/blog`：按标题、摘要、标签在前端本地过滤，并显示文章总数。
 - 文章详情 `/blog/:slug`：`marked` 渲染后经 DOMPurify 消毒；代码块高亮、行号、一键复制。
 - 合集列表 `/blog/collections` 与合集详情 `/blog/collections/:slug`，展示合集下的文章与篇数。
-- 目录：收集正文里的 `h1`/`h2`/`h3`，锚点用纯序号 `sec-N`；宽屏为侧栏，窄屏为滑出抽屉。
+- 目录：收集正文里的 `h1`/`h2`/`h3`，锚点用纯序号 `sec-N`，渲染为正文前的普通链接列表。
 - 草稿预览：URL 带 `?preview=<短时效令牌>` 时，服务端放行未发布文章，标题区标注 Draft preview。
-- 深浅色主题：`auto` / `light` / `dark`，存在 `localStorage` 的 `site_theme`，首帧前落地以免闪回。
+- 深浅色主题：`auto` / `light` / `dark`，存在 `localStorage` 的 `site_theme`，只切换 `color-scheme`。
 - 文章链接优先用雪花 ID `public_id`，无 `public_id` 的旧文章回退 `slug`。
-- 窄屏不隐藏导航，走右侧滑出抽屉。
+- 顶栏在任何视口下都可见，窄屏由浏览器自动换行。
 
 ## 快速开始
 
@@ -59,7 +61,7 @@ npm run preview  # 预览构建产物
 
 主站可安装、可离线阅读。Service Worker 是手写单文件 `public/sw.js`（无构建步骤、无 workbox、无新增依赖），生产构建下由 `src/pwa.ts` 注册，scope 为 `/`。
 
-- **缓存白名单**：只缓存导航请求（network-first，依次回退同路径缓存、SPA 外壳 `/index.html`、`offline.html`）、`/assets/*`（cache-first）、`/fonts/*`、`/hljs/*`、`/icons/*` 与图片（stale-while-revalidate）、以及公开只读 `GET /api/blog/*`（stale-while-revalidate，离线读博客的来源）。
+- **缓存白名单**：只缓存导航请求（network-first，依次回退同路径缓存、SPA 外壳 `/index.html`、`offline.html`）、`/assets/*`（cache-first）、`/hljs/*`、`/icons/*` 与图片（stale-while-revalidate）、以及公开只读 `GET /api/blog/*`（stale-while-revalidate，离线读博客的来源）。
 - **其余一律不缓存**、直接放行：`/api/blog/admin/*`、`/api/admin/*`、`/_auth/*`、`/s/*`、`/term/*`、`/admin*`、任何非 GET、跨域请求，以及 URL 含 `preview=` 的草稿预览请求。
 - **更新机制**：`install` 时 `skipWaiting()`；`activate` 时删掉所有不属于当前版本的缓存并 `clients.claim()`；页面在 `controllerchange` 时自动刷新一次，保证重建部署后刷新或重开即可拿到新版本。开发态不注册，并主动注销遗留 worker。
 - **`sw.js` 不得被长缓存**：它自身不在 SW 缓存白名单内；部署时 nginx 需对 `/sw.js` 下发短缓存（当前对 `/sw.js`、`/service-worker.js`、`/workbox-*.js` 返回 404 的历史防御需由运维在部署时改掉）。
