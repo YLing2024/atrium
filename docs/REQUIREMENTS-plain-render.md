@@ -15,8 +15,7 @@
 ## 必须删除
 
 - `src/index.css` 里的全部设计令牌与基于它们的规则；`--ease`、`--maxw` 之类的变量一并去掉。
-- 自托管字体：`package.json` 里 `@fontsource`、`@fontsource-variable/inter-tight`、`@fontsource/inter`、
-  `@fontsource/jetbrains-mono` 三个依赖、`public/fonts/` 目录、相关 `@font-face` 与 `index.html` 里的字体预载。
+- 自托管字体：`package.json` 里三个字体包依赖、`public/fonts/` 目录、相关 `@font-face` 与 `index.html` 里的字体预载。
 - 一切自定义视觉：调色、字号阶梯、间距阶梯、圆角、阴影、发丝线/装饰边框、`transition`/`animation`、
   自定义滚动条、自定义 `::selection`、装饰性伪元素、hover 变色或位移。
 - 装饰性结构：卡片容器、右侧滑出抽屉（含「目录」按钮）、应用中心的图标绘制（`src/appIcons.tsx` 及调用点）。
@@ -83,8 +82,8 @@
     - `grep -nE '#[0-9a-fA-F]{3,8}|rgba?\(|hsla?\(' src/index.css` → 0 命中
     - `grep -n 'font-family' src/index.css` → 只允许出现 `monospace`
     - `grep -nE 'border-radius|box-shadow|transition|animation' src/index.css` → 0 命中
-    - `git grep -n '@fontsource'` → 0 命中；`ls public/fonts` → 不存在
-    - `git grep -In 'check-tokens'` → 0 命中
+    - `git grep -nE '@font|fontsource' -- ':!docs'` → 0 命中（`docs/` 里的需求书本身会引用这些名字，故排除）；`ls public/fonts` → 不存在
+    - `git grep -In 'check-tokens' -- ':!docs'` → 0 命中（同上排除 `docs/`）
 
 ## 提交纪律（必须遵守）
 
