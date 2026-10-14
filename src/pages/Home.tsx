@@ -37,7 +37,7 @@ function Hero() {
         </div>
 
         <h1 className="hero__name">
-          <span className="hero__name-line">Yunling</span>
+          <span className="hero__name-line">Linden</span>{' '}
           <span className="hero__name-line">Zhang</span>
         </h1>
 
