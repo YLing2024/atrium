@@ -106,6 +106,7 @@ function Layout() {
   )
 }
 
+/** 应用外壳：顶栏（普通 nav）、主内容容器、纯文本页脚，外加路由表。 */
 export default function App() {
   return (
     <Routes>

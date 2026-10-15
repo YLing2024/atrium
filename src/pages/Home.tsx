@@ -83,6 +83,7 @@ function Contact() {
   )
 }
 
+/** 首页：Hero、About、最新三篇文章、Contact，全部为普通 HTML 结构。 */
 export default function Home() {
   return (
     <>

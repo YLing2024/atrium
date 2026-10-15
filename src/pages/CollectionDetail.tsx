@@ -9,6 +9,7 @@ function postTags(post: { tags?: string[] | null }): string[] {
   return post.tags || []
 }
 
+/** 合集详情 `/blog/collections/:slug`：合集说明与其下文章列表。 */
 export default function CollectionDetail() {
   const { slug } = useParams<{ slug: string }>()
   const { status, data: collection, retry } = useAsync<BlogCollectionDetail | null>(

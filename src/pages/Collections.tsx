@@ -3,6 +3,7 @@ import { getCollections, type BlogCollection } from '../api'
 import useAsync from '../hooks/useAsync'
 import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
+/** 合集列表 `/blog/collections`。 */
 export default function Collections() {
   const { status, data, retry } = useAsync<BlogCollection[]>(getCollections, [])
 

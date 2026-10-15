@@ -8,6 +8,7 @@ function isTheme(value: string | null): value is Theme {
   return value !== null && (THEMES as readonly string[]).includes(value)
 }
 
+/** 读取持久化的主题；缺省 / 非法 / 存储不可用时回退 `auto`。 */
 export function getTheme(): Theme {
   try {
     const stored = localStorage.getItem(THEME_KEY)
@@ -18,17 +19,21 @@ export function getTheme(): Theme {
   }
 }
 
-// 三态循环：auto → light → dark → auto。抽成纯函数，便于单测。
+// 三态循环顺序的唯一来源；抽成纯映射便于单测。
 const NEXT_THEME: Record<Theme, Theme> = { auto: 'light', light: 'dark', dark: 'auto' }
 
+/** 三态循环：auto → light → dark → auto。 */
 export function nextTheme(theme: Theme): Theme {
   return NEXT_THEME[theme]
 }
 
-// 把主题落到 <html data-theme>（auto 时删除该属性，交给 color-scheme 自动跟随）。
-// 代码高亮用的是两份 hljs 主题，它们的切换依据是 prefers-color-scheme；
-// 而手动选择只改 color-scheme、不会改 prefers-color-scheme，
-// 所以手动态必须在这里替两份 <link> 换 media，否则深色下代码块仍是浅色的。
+/**
+ * 把主题落到 `<html data-theme>`（`auto` 时清除该属性，交给 `color-scheme` 自动跟随），
+ * 并开合代码高亮的两份 hljs 皮肤 link。
+ *
+ * 为什么还要动 hljs link：两份皮肤靠 `prefers-color-scheme` 切换，而手动选择只改
+ * `color-scheme`、不会改 `prefers-color-scheme`，不换 `media` 的话深色下代码块仍是浅色的。
+ */
 export function applyTheme(theme: Theme): void {
   const root = document.documentElement
 
@@ -59,6 +64,7 @@ export function applyTheme(theme: Theme): void {
   }
 }
 
+/** 切到下一态、立即应用，并返回新主题。 */
 export function cycleTheme(): Theme {
   const next = nextTheme(getTheme())
   applyTheme(next)

@@ -10,6 +10,7 @@ function postTags(post: { tags?: string[] | null }): string[] {
   return post.tags || []
 }
 
+/** 博客列表 `/blog`：按标题 / 摘要 / 标签在前端本地过滤；链接优先 `public_id`、回退 `slug`。 */
 export default function BlogList() {
   const { status, data, retry } = useAsync<BlogPostSummary[]>(fetchPosts, [])
   const [query, setQuery] = useState<string>('')
