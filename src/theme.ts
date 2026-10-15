@@ -19,8 +19,10 @@ export function getTheme(): Theme {
 }
 
 // 三态循环：auto → light → dark → auto。抽成纯函数，便于单测。
+const NEXT_THEME: Record<Theme, Theme> = { auto: 'light', light: 'dark', dark: 'auto' }
+
 export function nextTheme(theme: Theme): Theme {
-  return { auto: 'light', light: 'dark', dark: 'auto' }[theme]
+  return NEXT_THEME[theme]
 }
 
 // 把主题落到 <html data-theme>（auto 时删除该属性，交给 color-scheme 自动跟随）。
