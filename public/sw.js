@@ -15,7 +15,7 @@
 
 // Single version constant. Bump it on a release that needs to invalidate
 // cached responses; activate() then drops every cache that is not this one.
-const VERSION = 'v1'
+const VERSION = 'v2'
 const CACHE_PREFIX = 'homepage-'
 const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`
 
@@ -24,7 +24,7 @@ const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`
 const PRECACHE_URLS = ['/index.html', '/offline.html']
 
 // Request classes allowed to be cached (section A of the spec).
-const STATIC_PREFIXES = ['/fonts/', '/hljs/', '/icons/']
+const STATIC_PREFIXES = ['/hljs/', '/icons/']
 const IMAGE_EXT = /\.(?:png|jpe?g|webp|svg|ico)$/i
 
 // ---------------------------------------------------------------------------
@@ -110,7 +110,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Same-origin static assets: fonts, highlight themes, icons, images.
+  // Same-origin static assets: highlight themes, icons, images.
   if (STATIC_PREFIXES.some((prefix) => path.startsWith(prefix)) || IMAGE_EXT.test(path)) {
     event.respondWith(staleWhileRevalidate(event))
     return
