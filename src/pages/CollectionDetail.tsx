@@ -17,54 +17,37 @@ export default function CollectionDetail() {
   )
 
   return (
-    <article className="page container collection">
+    <article>
       {status === 'loading' && <LoadingState />}
       {status === 'error' && <ErrorState onRetry={retry} />}
       {status === 'success' && collection === null && <EmptyState message="Collection not found." />}
 
       {status === 'success' && collection && (
         <>
-          <Link className="back-link" to="/blog/collections">
-            <span aria-hidden="true">←</span> All collections
-          </Link>
-          <header className="post__head">
-            <p className="kicker">Collection</p>
-            <h1 className="post__title">{collection.name}</h1>
-            {collection.description && (
-              <p className="collection__desc">{collection.description}</p>
-            )}
+          <p>
+            <Link to="/blog/collections">← All collections</Link>
+          </p>
+          <header>
+            <p>Collection</p>
+            <h1>{collection.name}</h1>
+            {collection.description && <p>{collection.description}</p>}
           </header>
 
           {collection.posts.length === 0 && <EmptyState message="No posts in this collection yet." />}
 
           {collection.posts.length > 0 && (
-            <div className="blog-list__rows">
-              {collection.posts.map((post, i) => (
-                <article className="post-row" key={post.id}>
-                  <time className="post-row__date" dateTime={post.created_at || undefined}>
-                    {formatDate(post.created_at)}
-                  </time>
-                  <span className="post-row__num" aria-hidden="true">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className="post-row__cell">
-                    <Link className="post-row__main" to={`/blog/${post.public_id || post.slug}`}>
-                      <h2 className="post-row__title">{post.title}</h2>
-                      {post.excerpt && <p className="post-row__excerpt">{post.excerpt}</p>}
-                    </Link>
-                    {postTags(post).length > 0 && (
-                      <div className="post-row__tags">
-                        {postTags(post).map((tag) => (
-                          <span className="tag" key={tag}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </article>
+            <ul>
+              {collection.posts.map((post) => (
+                <li key={post.id}>
+                  <time dateTime={post.created_at || undefined}>{formatDate(post.created_at)}</time>
+                  <h2>
+                    <Link to={`/blog/${post.public_id || post.slug}`}>{post.title}</Link>
+                  </h2>
+                  {post.excerpt && <p>{post.excerpt}</p>}
+                  {postTags(post).length > 0 && <p>{postTags(post).join(' · ')}</p>}
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </>
       )}
