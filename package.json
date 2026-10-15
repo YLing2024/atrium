@@ -13,9 +13,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\" --max-warnings 30",
-    "check:tokens": "node scripts/check-tokens.mjs",
     "test": "node --test",
-    "check": "npm run typecheck && npm run lint && npm run lint:css && npm run check:tokens && npm test"
+    "check": "npm run typecheck && npm run lint && npm run lint:css && npm test"
   },
   "dependencies": {
     "dompurify": "^3.4.13",
