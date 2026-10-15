@@ -1,43 +1,48 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchPublicApps, type PublicApp, type PublicAppsPayload } from '../api'
-import { AppIcon } from '../appIcons'
-import { STATUS_LABEL, groupApps, isAbnormal, latencyText, normalizeStatus } from '../appStatus'
+import { STATUS_LABEL, groupApps, latencyText, normalizeStatus } from '../appStatus'
 import { LoadingState, ErrorState, EmptyState } from '../components/States'
 
 const REFRESH_MS = 30000
 
-function AppCard({ app }: { app: PublicApp }) {
-  const status = normalizeStatus(app.status)
-  const latency = latencyText(app.latencyMs, app.status)
-  const tone = isAbnormal(app.status) ? 'alert' : status === 'idle' ? 'idle' : 'ok'
-
-  const body = (
-    <>
-      <span className="app-card__icon" aria-hidden="true">
-        <AppIcon name={app.icon} fallback={app.name} />
-      </span>
-      <h3 className="app-card__name">{app.name}</h3>
-      {app.desc ? <p className="app-card__desc">{app.desc}</p> : null}
-      <span className="app-card__foot">
-        <span className={`app-card__dot app-card__dot--${tone}`} aria-hidden="true" />
-        <span className="app-card__status">{STATUS_LABEL[status]}</span>
-        {latency && <span className="app-card__latency">{latency}</span>}
-      </span>
-    </>
-  )
-
-  // 有对外地址才可点；没有地址的基础服务是纯展示。
-  if (app.url) {
-    return (
-      <a className="app-card" href={app.url} target="_blank" rel="noopener noreferrer">
-        {body}
-      </a>
-    )
-  }
-
-  return <div className="app-card">{body}</div>
+interface AppRowProps {
+  /** 单个应用条目，来自公开只读接口 `/api/public/apps`。 */
+  app: PublicApp
 }
 
+/**
+ * 应用列表的一行：应用名（有对外地址时为链接）+ 状态文字 + 可选延迟。
+ *
+ * 纯文本，不画图标、不用色点表示状态；状态文案由 `appStatus.ts` 给出，这里只做展示。
+ * 有 `url` 时新标签打开并带 `rel="noopener noreferrer"`；无 `url` 的基础服务只展示名称。
+ */
+export function AppRow({ app }: AppRowProps) {
+  const status = normalizeStatus(app.status)
+  const latency = latencyText(app.latencyMs, app.status)
+
+  return (
+    <li>
+      {app.url ? (
+        <a href={app.url} target="_blank" rel="noopener noreferrer">
+          {app.name}
+        </a>
+      ) : (
+        app.name
+      )}
+      {' · '}
+      {STATUS_LABEL[status]}
+      {latency ? ` · ${latency}` : null}
+      {app.desc ? <p>{app.desc}</p> : null}
+    </li>
+  )
+}
+
+/**
+ * 应用中心 `/apps`：按分类分组展示公开应用与实时状态。
+ *
+ * 数据只来自同源 `GET /api/public/apps`（`cache: 'no-store'`），30s 自动刷新；
+ * 页面隐藏时暂停刷新，恢复可见立即刷一次。刷新失败时保留上一次成功的数据，只在顶部提示一行。
+ */
 export default function Apps() {
   const [data, setData] = useState<PublicAppsPayload | null>(null)
   const [failed, setFailed] = useState(false)
@@ -88,40 +93,32 @@ export default function Apps() {
   const groups = groupApps(categories, apps)
 
   return (
-    <section className="page container apps">
-      <header className="blog-list__head">
-        <p className="kicker">Index</p>
-        <h1 className="blog-list__title">Apps</h1>
-        <div className="apps__meta">
-          <p className="blog-list__count">{data ? `${apps.length} apps` : '—'}</p>
-          <button
-            type="button"
-            className="apps__refresh"
-            onClick={load}
-            disabled={loading}
-          >
-            刷新
-          </button>
-        </div>
+    <section>
+      <header>
+        <p>Index</p>
+        <h1>Apps</h1>
+        <p>{data ? `${apps.length} apps` : '—'}</p>
+        <button type="button" onClick={load} disabled={loading}>
+          刷新
+        </button>
       </header>
 
-      {failed && data && <p className="apps__notice">暂时无法更新</p>}
+      {failed && data && <p>暂时无法更新</p>}
 
       {!data && loading && <LoadingState />}
       {!data && !loading && failed && <ErrorState onRetry={load} />}
       {data && apps.length === 0 && <EmptyState message="暂无应用。" />}
 
       {groups.map((group) => (
-        <section className="apps__group" key={group.id}>
-          <h2 className="apps__group-title">
-            {group.name}
-            <span className="apps__group-count">{group.apps.length}</span>
+        <section key={group.id}>
+          <h2>
+            {group.name}（{group.apps.length}）
           </h2>
-          <div className="apps__grid">
+          <ul>
             {group.apps.map((app) => (
-              <AppCard key={app.id} app={app} />
+              <AppRow key={app.id} app={app} />
             ))}
-          </div>
+          </ul>
         </section>
       ))}
     </section>
