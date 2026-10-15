@@ -12,24 +12,23 @@ export function getTheme(): Theme {
   try {
     const stored = localStorage.getItem(THEME_KEY)
     return isTheme(stored) ? stored : 'auto'
-  } catch (e) {
+  } catch {
+    // localStorage 不可用（隐私模式）时按「跟随系统」处理
     return 'auto'
   }
 }
 
-export function systemPrefersDark(): boolean {
-  if (typeof window === 'undefined' || !window.matchMedia) return false
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
+// 三态循环：auto → light → dark → auto。抽成纯函数，便于单测。
+export function nextTheme(theme: Theme): Theme {
+  return { auto: 'light', light: 'dark', dark: 'auto' }[theme]
 }
 
-export function effectiveTheme(theme: Theme): 'light' | 'dark' {
-  if (theme === 'light' || theme === 'dark') return theme
-  return systemPrefersDark() ? 'dark' : 'light'
-}
-
+// 把主题落到 <html data-theme>（auto 时删除该属性，交给 color-scheme 自动跟随）。
+// 代码高亮用的是两份 hljs 主题，它们的切换依据是 prefers-color-scheme；
+// 而手动选择只改 color-scheme、不会改 prefers-color-scheme，
+// 所以手动态必须在这里替两份 <link> 换 media，否则深色下代码块仍是浅色的。
 export function applyTheme(theme: Theme): void {
   const root = document.documentElement
-  const effective = effectiveTheme(theme)
 
   if (theme === 'auto') {
     delete root.dataset.theme
@@ -39,36 +38,27 @@ export function applyTheme(theme: Theme): void {
 
   try {
     localStorage.setItem(THEME_KEY, theme)
-  } catch (e) {
-    // localStorage unavailable (private mode) — stay silent
-  }
-
-  const meta = document.querySelector('meta[name="theme-color"]')
-  if (meta) {
-    meta.setAttribute('content', effective === 'dark' ? '#13110f' : '#f7f6f3')
+  } catch {
+    // localStorage 不可用（隐私模式）时静默降级
   }
 
   const lightLink = document.getElementById('hljs-light')
   const darkLink = document.getElementById('hljs-dark')
 
   if (theme === 'auto') {
-    if (lightLink) lightLink.setAttribute('media', '(prefers-color-scheme: light)')
-    if (darkLink) darkLink.setAttribute('media', '(prefers-color-scheme: dark)')
+    lightLink?.setAttribute('media', '(prefers-color-scheme: light)')
+    darkLink?.setAttribute('media', '(prefers-color-scheme: dark)')
   } else if (theme === 'dark') {
-    if (lightLink) lightLink.setAttribute('media', 'not all')
-    if (darkLink) darkLink.setAttribute('media', 'all')
+    lightLink?.setAttribute('media', 'not all')
+    darkLink?.setAttribute('media', 'all')
   } else {
-    if (lightLink) lightLink.setAttribute('media', 'all')
-    if (darkLink) darkLink.setAttribute('media', 'not all')
+    lightLink?.setAttribute('media', 'all')
+    darkLink?.setAttribute('media', 'not all')
   }
 }
 
 export function cycleTheme(): Theme {
-  const next: Theme = { auto: 'light', light: 'dark', dark: 'auto' }[getTheme()] as Theme
+  const next = nextTheme(getTheme())
   applyTheme(next)
   return next
-}
-
-export function initTheme(): void {
-  applyTheme(getTheme())
 }
