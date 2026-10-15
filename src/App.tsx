@@ -61,7 +61,7 @@ function Nav() {
   return (
     <header>
       <nav className="container" aria-label="Primary">
-        <Link to="/" aria-label="Yunling Zhang — Home">
+        <Link to="/" aria-label="Linden Zhang — Home">
           ◇
         </Link>{' '}
         {NAV_LINKS.map(({ to, label, end }) => (
@@ -87,7 +87,7 @@ function Nav() {
 function Footer() {
   return (
     <footer className="container">
-      <p>© 2026 Yunling Zhang</p>
+      <p>© 2026 Linden Zhang</p>
       <p>Made by hand</p>
     </footer>
   )

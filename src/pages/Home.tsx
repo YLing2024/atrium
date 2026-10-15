@@ -8,7 +8,7 @@ function Hero() {
   return (
     <section id="top">
       <p>A quiet corner of the web, made by hand</p>
-      <h1>Yunling Zhang</h1>
+      <h1>Linden Zhang</h1>
       <p>Interfaces on the front. Infrastructure underneath.</p>
       <blockquote>
         <p>立志欲坚不欲锐，成功在久不在速。</p>
