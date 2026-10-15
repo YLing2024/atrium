@@ -34,7 +34,7 @@ npm run preview  # 预览构建产物
 
 ## 配置
 
-本仓库**不持有任何环境变量**，代码不读取 `import.meta.env.VITE_*`，`.gitignore` 仅拦截本地文件（`node_modules/`、`dist/`、`data/`、`*.db`、`.env`、`PROJECT_MEMORY.md`）。
+本仓库**不持有任何环境变量**，代码不读取 `import.meta.env.VITE_*`，`.gitignore` 仅拦截本地文件（`node_modules/`、`dist/`、`data/`、`*.db`、`.env`）。
 
 接口地址是硬编码的相对路径，见 `src/api.ts`：
 

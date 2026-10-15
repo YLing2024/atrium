@@ -34,7 +34,7 @@ Local development needs the blog backend (`atrium-blog`, `:4000`) running; `dev`
 
 ## Configuration
 
-This repo holds **no environment variables**; the code does not read `import.meta.env.VITE_*`. `.gitignore` only blocks local files (`node_modules/`, `dist/`, `data/`, `*.db`, `.env`, `PROJECT_MEMORY.md`).
+This repo holds **no environment variables**; the code does not read `import.meta.env.VITE_*`. `.gitignore` only blocks local files (`node_modules/`, `dist/`, `data/`, `*.db`, `.env`).
 
 API addresses are hard-coded relative paths, see `src/api.ts`:
 
