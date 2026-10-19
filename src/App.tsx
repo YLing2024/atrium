@@ -5,7 +5,6 @@ import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
 import Collections from './pages/Collections'
 import CollectionDetail from './pages/CollectionDetail'
-import Apps from './pages/Apps'
 import { getTheme, cycleTheme, applyTheme, type Theme } from './theme'
 
 // 主题按钮的可见文案：三个主题各一项，键必须是完整主题集合（缺一个会渲染出洞）。
@@ -26,7 +25,6 @@ const THEME_TITLE: Record<Theme, string> = {
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/blog', label: 'Blog', end: false },
-  { to: '/apps', label: 'Apps', end: false },
 ] as const
 
 // 路由切换后回到页首。这里刻意不做平滑滚动：滚动动效属于自定义视觉，已随朴素排版删除。
@@ -112,7 +110,6 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="apps" element={<Apps />} />
         <Route path="blog" element={<BlogList />} />
         <Route path="blog/collections" element={<Collections />} />
         <Route path="blog/collections/:slug" element={<CollectionDetail />} />

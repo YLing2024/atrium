@@ -10,7 +10,6 @@
 - 博客列表 `/blog`：按标题、摘要、标签在前端本地过滤，并显示文章总数。
 - 文章详情 `/blog/:slug`：`marked` 渲染后经 DOMPurify 消毒；代码块高亮、行号、一键复制。
 - 合集列表 `/blog/collections` 与合集详情 `/blog/collections/:slug`，展示合集下的文章与篇数。
-- 应用中心 `/apps`：按分类展示公开应用与实时状态（纯文本列表）。
 - 目录：收集正文里的 `h1`/`h2`/`h3`，锚点用纯序号 `sec-N`，渲染为普通链接列表（不再有侧栏 / 抽屉）。
 - 草稿预览：URL 带 `?preview=<短时效令牌>` 时，服务端放行未发布文章，标题区标注 Draft preview。
 - 深浅色主题：`auto` / `light` / `dark`，存在 `localStorage` 的 `site_theme`，首帧前落地以免闪回。

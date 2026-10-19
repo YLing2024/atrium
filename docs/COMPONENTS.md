@@ -13,7 +13,6 @@
 | `LoadingState` | 加载中占位 | `label?: string`（默认 `Loading…`） | `<LoadingState />` | `role="status"`，温和播报；不要塞长文案 |
 | `ErrorState` | 加载失败占位 | `onRetry?: () => void`（可选） | `<ErrorState onRetry={retry} />` | `role="alert"`，会立即播报；不传 `onRetry` 时不显示重试按钮 |
 | `EmptyState` | 空数据占位 | `message?: string`（默认 `Nothing here yet.`） | `<EmptyState message="No posts yet." />` | 纯文本；文案由调用方给，避免在此处硬编码业务文案 |
-| `AppRow` | 应用中心列表的一行 | `app: PublicApp`（必填） | `<ul>{apps.map((a) => <AppRow key={a.id} app={a} />)}</ul>` | 必须放在 `<ul>` 内（渲染 `<li>`）；`app.url` 存在时渲染新标签链接并带 `rel="noopener noreferrer"`；状态只输出文字，无图标、无色点 |
 
 ## 相关 hook
 

@@ -10,7 +10,6 @@ A purely static single-page app for the personal homepage and blog frontend. It 
 - Blog list `/blog`: filters locally by title, excerpt and tag in the browser, and shows the total post count.
 - Post detail `/blog/:slug`: `marked` renders and DOMPurify sanitizes; code blocks are highlighted, numbered and copyable in one click.
 - Collection list `/blog/collections` and collection detail `/blog/collections/:slug`, showing the posts and count under a collection.
-- Apps `/apps`: public apps grouped by category with live status (a plain text list).
 - Table of contents: collects `h1`/`h2`/`h3` from the body; anchors use plain sequence numbers `sec-N`, rendered as a plain link list (no sidebar or drawer).
 - Draft preview: when the URL carries `?preview=<short-lived token>`, the server lets unpublished posts through and the title area is marked Draft preview.
 - Light/dark theme: `auto` / `light` / `dark`, stored in `localStorage` as `site_theme`, applied before the first frame to avoid a flash.
