@@ -2458,3 +2458,76 @@ p {
     display: none;
   }
 }
+/* Tables v5 — 去掉 Excel 网格：只保留横向细线 + 表头墨线 */
+.post__table-wrap {
+  border: 0;
+  border-radius: 0;
+  margin: var(--s6) 0 var(--s7);
+  overflow-x: auto;
+}
+
+.post__table-wrap table,
+.prose table,
+.post__body table {
+  width: 100%;
+  border: 0;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.post__table-wrap th,
+.prose th,
+.post__body th {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--fg);
+  padding: 0 20px 10px 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.post__table-wrap td,
+.prose td,
+.post__body td {
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 20px 12px 0;
+  line-height: 1.6;
+  vertical-align: top;
+  text-align: left;
+}
+
+.post__table-wrap td:first-child,
+.prose td:first-child,
+.post__body td:first-child {
+  color: var(--fg);
+  font-weight: 500;
+  white-space: nowrap;
+  padding-right: 28px;
+}
+
+.post__table-wrap tr:last-child td,
+.prose tr:last-child td,
+.post__body tr:last-child td {
+  border-bottom: 0;
+}
+
+.post__table-wrap tbody tr:hover td,
+.prose tbody tr:hover td,
+.post__body tbody tr:hover td {
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+
+.post__table-wrap td code,
+.prose td code,
+.post__body td code {
+  font-size: 12.5px;
+  padding: 2px 5px;
+}
