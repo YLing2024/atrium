@@ -2172,3 +2172,289 @@ p {
   outline-offset: 3px;
   border-radius: 2px;
 }
+
+/* ==========================================================================
+   Refinement layer v4 — hero / section / list / post / mobile
+   目标：把首页与文章页做成同一套「三段式」版式：标签 → 大标题 → 细线元信息。
+   ========================================================================== */
+
+/* ---------- Hero ---------- */
+
+.hero {
+  min-height: 76vh;
+  padding: 112px 0 88px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.hero__meta {
+  margin-bottom: var(--s8);
+}
+
+.hero__kicker {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+.hero__kicker::before {
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.9;
+  margin-bottom: 14px;
+}
+
+.hero__name {
+  font-size: clamp(56px, 8.2vw, 116px);
+  font-weight: 520;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+}
+
+.hero__bottom {
+  margin-top: var(--s7);
+  padding-top: var(--s5);
+  border-top: 1px solid var(--rule);
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  column-gap: var(--s7);
+}
+
+.hero__sub {
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 30ch;
+  color: var(--fg);
+}
+
+.hero__quote {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--faint);
+  max-width: 40ch;
+}
+
+.hero__quote-attrib {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+}
+
+/* ---------- Section ---------- */
+
+.section {
+  padding: var(--s9) 0;
+  border-bottom: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.section--last {
+  border-top: 1px solid var(--rule);
+}
+
+.section-kicker {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+.section-kicker::after {
+  width: 24px;
+  background: var(--line);
+}
+
+.swiss-grid > h2,
+.swiss-content > h2,
+.section > h2 {
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 520;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 0 0 var(--s5);
+}
+
+.about__lead {
+  font-size: clamp(19px, 2vw, 23px);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  max-width: 46ch;
+}
+
+.about__body {
+  font-size: var(--t-body);
+  line-height: var(--lh-cjk);
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+.contact__link {
+  font-size: 15px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+}
+
+.contact__link:hover {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Blog list ---------- */
+
+.blog-list__head {
+  padding-bottom: var(--s6);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--s6);
+}
+
+.blog-list__head-row {
+  align-items: end;
+}
+
+.blog-list__title {
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 520;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.blog-list__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 搜索框：去掉方块，改成一条底线 */
+.blog-list__search input {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.blog-list__search input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+/* ---------- Post ---------- */
+
+.post__head {
+  padding-bottom: var(--s6);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--s7);
+}
+
+.post__title {
+  font-size: clamp(30px, 4.2vw, 52px);
+  font-weight: 520;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  max-width: 28ch;
+}
+
+.post__subtitle {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 52ch;
+  margin-top: var(--s4);
+}
+
+.post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  margin-top: var(--s5);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 正文里的表格：去掉外框，只用横向细线 */
+.post__body table {
+  border: 0;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: var(--s6) 0;
+}
+
+.post__body th {
+  text-align: left;
+  font-weight: 520;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--fg);
+  padding: var(--s3) var(--s4) var(--s2) 0;
+}
+
+.post__body td {
+  border-bottom: 1px solid var(--rule);
+  padding: var(--s3) var(--s4) var(--s3) 0;
+  vertical-align: top;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 720px) {
+  :root {
+    --t-body: 16.5px;
+    --s9: 64px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 88px 0 56px;
+  }
+
+  .hero__name {
+    font-size: clamp(44px, 13vw, 64px);
+    line-height: 0.98;
+  }
+
+  .hero__bottom {
+    grid-template-columns: 1fr;
+    row-gap: var(--s5);
+  }
+
+  .hero__sub {
+    max-width: none;
+  }
+
+  .section {
+    padding: var(--s8) 0;
+  }
+
+  .post__title {
+    font-size: clamp(26px, 7vw, 34px);
+    max-width: none;
+  }
+
+  .blog-list__title {
+    font-size: 30px;
+  }
+
+  .post-row {
+    grid-template-columns: 1fr;
+    row-gap: var(--s2);
+    padding: var(--s5) 0;
+  }
+
+  .post-row__date,
+  .post-row__num {
+    display: none;
+  }
+}
