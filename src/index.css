@@ -1196,6 +1196,13 @@ body.nav-open {
   top: 140px;
   max-height: calc(100vh - 170px);
   overflow-y: auto;
+  /* 目录条数多时内部仍可滚，但不显示那道灰条：与整页视觉统一 */
+  scrollbar-width: none;
+}
+
+.post__toc::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .post__toc-head {
@@ -1864,4 +1871,28 @@ body.nav-open {
   .apps__grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Scrollbar: 8px hairline, no track ---------- */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
 }
