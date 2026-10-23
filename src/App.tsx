@@ -142,7 +142,7 @@ function Nav() {
     <>
       <header className="nav">
         <div className="container nav__inner">
-          <Link className="nav__brand" to="/" aria-label="Linden Zhang — Home">
+          <Link className="nav__brand" to="/" aria-label="Yunling Zhang — Home">
             <span className="nav__brand-mark" aria-hidden="true" />
           </Link>
 
@@ -208,7 +208,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        <span>© 2026 Linden Zhang</span>
+        <span>© 2026 Yunling Zhang</span>
         <span className="footer__note">Made by hand</span>
       </div>
     </footer>
