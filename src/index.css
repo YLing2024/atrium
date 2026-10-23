@@ -30,7 +30,7 @@
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", SFMono-Regular,
     Menlo, Monaco, Consolas, monospace;
 
-  --maxw: 1120px;
+  --maxw: 1040px;
   --gutter: 24px;
   --rail: 224px;
 
@@ -448,10 +448,10 @@ body.nav-open {
 /* ---------- Hero ---------- */
 
 .hero {
-  min-height: 84vh;
+  min-height: 86vh;
   display: flex;
   align-items: flex-end;
-  padding: 128px 0 112px;
+  padding: 136px 0 120px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -486,10 +486,10 @@ body.nav-open {
 
 .hero__name {
   font-family: var(--font-sans);
-  font-size: clamp(52px, 10.5vw, 148px);
-  font-weight: 250;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  font-size: clamp(44px, 7vw, 94px);
+  font-weight: 520;
+  letter-spacing: -0.032em;
+  line-height: 0.98;
   color: var(--fg);
 }
 
@@ -568,7 +568,7 @@ body.nav-open {
 /* ---------- Sections ---------- */
 
 .section {
-  padding: clamp(72px, 10vh, 112px) 0;
+  padding: clamp(80px, 11vh, 128px) 0;
   border-bottom: 1px solid var(--line);
 }
 
