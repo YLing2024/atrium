@@ -1957,3 +1957,218 @@ p {
   line-height: 1.8;
   letter-spacing: 0.01em;
 }
+
+/* ==========================================================================
+   Refinement layer v3 — 2026-10-23
+   目标：去掉「方正/平板」，建立三级字号台阶 + 不等距节奏 + 目录导轨。
+   只覆盖视觉参数，不动任何结构类名。
+   ========================================================================== */
+
+:root {
+  /* 间距阶（4px 基准，相邻两级约 1.5×） */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+  --s9: 96px;
+
+  /* 三级字号台阶：meta → body → 段落标题 → 区块标题 */
+  --t-meta: 12px;
+  --t-body: 17px;
+  --t-h3: 20px;
+  --t-h2: 30px;
+
+  --lh-body: 1.7;
+  --lh-cjk: 1.85;
+
+  /* 细分隔线：暖纸色环境里比纯灰更柔 */
+  --rule: color-mix(in srgb, var(--fg) 12%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --rule: color-mix(in srgb, var(--fg) 14%, transparent);
+  }
+}
+
+:root[data-theme='dark'] {
+  --rule: color-mix(in srgb, var(--fg) 14%, transparent);
+}
+
+/* ---------- 正文 ---------- */
+
+.prose,
+.post__body {
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  max-width: 68ch;
+}
+
+.prose p,
+.post__body p {
+  margin: 0 0 var(--s5);
+  line-height: var(--lh-cjk);
+  letter-spacing: 0.008em;
+}
+
+/* 段落标题：与上一段拉开 2×，与下一段只留 1×（邻近原则） */
+.prose h2,
+.post__body h2 {
+  font-size: var(--t-h2);
+  font-weight: 520;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin: var(--s8) 0 var(--s4);
+}
+
+.prose h3,
+.post__body h3 {
+  font-size: var(--t-h3);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  margin: var(--s7) 0 var(--s3);
+}
+
+.prose ul,
+.prose ol,
+.post__body ul,
+.post__body ol {
+  margin: 0 0 var(--s5);
+  padding-left: 1.15em;
+}
+
+.prose li,
+.post__body li {
+  margin-bottom: var(--s2);
+  line-height: var(--lh-cjk);
+}
+
+/* 行内代码：去掉方块描边，改浅底 + 同色字 */
+.prose :not(pre) > code,
+.post__body :not(pre) > code {
+  padding: 0.12em 0.36em;
+  border: 0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  font-size: 0.9em;
+}
+
+/* 引用：左侧 2px 琥珀线，斜体不用，靠缩进和色阶 */
+.prose blockquote,
+.post__body blockquote {
+  margin: var(--s6) 0;
+  padding: 0 0 0 var(--s5);
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-style: normal;
+}
+
+/* ---------- 文章目录：编号右对齐导轨 ---------- */
+
+.post__toc nav ul {
+  margin: var(--s4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post__toc-item a {
+  display: grid;
+  grid-template-columns: 2.4ch 1fr;
+  column-gap: var(--s3);
+  align-items: baseline;
+  padding: 5px 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 1px solid transparent;
+  padding-left: var(--s3);
+  margin-left: calc(-1 * var(--s3));
+  transition: color 0.12s var(--ease), border-color 0.12s var(--ease);
+}
+
+.post__toc-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-align: right;
+  color: var(--faint);
+}
+
+.post__toc-item a:hover {
+  color: var(--fg);
+}
+
+.post__toc-item a.is-active {
+  color: var(--fg);
+  border-left-color: var(--accent);
+}
+
+.post__toc-item a.is-active .post__toc-num {
+  color: var(--accent);
+}
+
+.post__toc-depth-3 a {
+  padding-left: calc(var(--s3) + 1.2em);
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* ---------- 标题层级（页面级） ---------- */
+
+.page-title,
+.blog-hero h1 {
+  font-size: clamp(38px, 5vw, 64px);
+  font-weight: 520;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+}
+
+/* ---------- 列表行：更紧的呼吸 ---------- */
+
+.post-row {
+  grid-template-columns: 104px 32px minmax(0, 1fr);
+  column-gap: var(--s4);
+  padding: var(--s6) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.post-row:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.post-row__title {
+  font-size: clamp(21px, 2.2vw, 27px);
+  font-weight: 450;
+  letter-spacing: -0.022em;
+  line-height: 1.28;
+}
+
+.post-row__excerpt {
+  font-size: 14.5px;
+  line-height: 1.72;
+  max-width: 58ch;
+}
+
+/* 悬停时右侧箭头不再从 -4px 滑入（位移让人分心），只淡入 */
+.post-row__title-arrow {
+  transform: none;
+  opacity: 0;
+}
+
+.post-row__main:hover .post-row__title-arrow {
+  transform: none;
+  opacity: 0.55;
+}
+
+/* ---------- 焦点环：键盘用户才看得见 ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
