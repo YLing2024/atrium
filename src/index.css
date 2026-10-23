@@ -717,13 +717,19 @@ body.nav-open {
 
 .tag {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 0;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
-  border: 1px solid var(--line);
+  color: var(--faint);
+  border: 0;
+}
+
+.tag + .tag::before {
+  content: "·";
+  margin: 0 7px 0 5px;
+  color: var(--line);
 }
 
 /* ---------- Post row (editorial) ---------- */
@@ -1196,13 +1202,21 @@ body.nav-open {
   top: 140px;
   max-height: calc(100vh - 170px);
   overflow-y: auto;
-  /* 目录条数多时内部仍可滚，但不显示那道灰条：与整页视觉统一 */
-  scrollbar-width: none;
+  /* 目录条数多时内部仍可滚：用 4px 主题色细条，替掉系统那条刺眼的白条 */
 }
 
 .post__toc::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  width: 4px;
+  height: 4px;
+}
+
+.post__toc::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 2px;
+}
+
+.post__toc::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
 }
 
 .post__toc-head {
@@ -1874,9 +1888,12 @@ body.nav-open {
 }
 
 /* ---------- Scrollbar: 8px hairline, no track ---------- */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: var(--line) transparent;
+/* Chrome/Edge/Safari 走 ::-webkit-scrollbar（见下）；Firefox 只认 scrollbar-width */
+@supports (-moz-appearance: none) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -1895,4 +1912,48 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--faint);
+}
+
+
+/* ---------- Optical refinements ---------- */
+
+/* 链接：常驻细下划线，hover 加深；偏移 3px 避免压字 */
+a {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, currentColor 28%, transparent);
+  transition: text-decoration-color 0.12s var(--ease), color 0.12s var(--ease);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* 选中：用琥珀色的 12% 底，而不是系统蓝 */
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--fg);
+}
+
+/* 数字：等宽 + 斜杠零，表格与目录的编号列更像印刷品 */
+.post-row__num,
+.post-row__date,
+.post__toc a {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* 标题避孤行（支持的浏览器） */
+h1, h2, h3, .post-row__title {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* 中文段落呼吸感：行高 1.8、字距 +0.01em */
+:lang(zh) p,
+.prose p {
+  line-height: 1.8;
+  letter-spacing: 0.01em;
 }
