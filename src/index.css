@@ -213,19 +213,10 @@ button {
 }
 
 .nav__brand-mark {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border: 1px solid var(--line);
-}
-
-.nav__brand-mark::before {
-  content: "";
-  width: 9px;
-  height: 9px;
-  background: var(--accent);
-  transform: rotate(45deg);
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: none;
 }
 
 .nav__brand-name {

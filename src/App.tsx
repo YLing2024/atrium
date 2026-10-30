@@ -143,7 +143,10 @@ function Nav() {
       <header className="nav">
         <div className="container nav__inner">
           <Link className="nav__brand" to="/" aria-label="Yunling Zhang — Home">
-            <span className="nav__brand-mark" aria-hidden="true" />
+            <svg className="nav__brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="16" cy="11.5" r="8.4" fill="currentColor" />
+              <rect x="1" y="25" width="30" height="4.4" rx="2.2" fill="var(--accent)" />
+            </svg>
           </Link>
 
           <nav className="nav__links" aria-label="Primary">
